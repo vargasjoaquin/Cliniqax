@@ -1,6 +1,6 @@
 ﻿namespace CliniqaxSystem.Domain.Common
 {
-    public abstract class AuditableEntity
+    public abstract class AuditableEntity : BaseEntity
     {
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }

@@ -2,7 +2,7 @@
 
 namespace CliniqaxSystem.Domain.Entities
 {
-    public class Speciality : AuditableEntity
+    public class Specialty : AuditableEntity
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
