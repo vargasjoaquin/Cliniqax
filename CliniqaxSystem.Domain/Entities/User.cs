@@ -8,6 +8,7 @@ namespace CliniqaxSystem.Domain.Entities
         public string Password { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
+        public string FullName => $"{FirstName} {LastName}".Trim();
         public string? Email { get; set; }
         public bool IsActive { get; set; } = true;
         public byte[]? Photo { get; set; }

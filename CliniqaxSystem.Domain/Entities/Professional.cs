@@ -6,6 +6,7 @@ namespace CliniqaxSystem.Domain.Entities
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
+        public string FullName => $"{FirstName} {LastName}".Trim();
         public string DocumentNumber { get; set; } = null!;
         public string LicenseNumber { get; set; } = null!; //Numero de matrícula
         public string? Phone {  get; set; }
