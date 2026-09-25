@@ -1,6 +1,6 @@
 ﻿namespace CliniqaxSystem.Domain.Entities
 {
-    public class ProfessionalSpeciality
+    public class ProfessionalSpecialty
     {
         public int ProfessionalId { get; set; }
         public virtual Professional Professional { get; set; } = null!;

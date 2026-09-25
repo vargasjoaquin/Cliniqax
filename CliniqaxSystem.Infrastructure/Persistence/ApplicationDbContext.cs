@@ -30,7 +30,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<HealthInsurance> HealthInsurances => Set<HealthInsurance>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<Professional> Professionals => Set<Professional>();
-    public DbSet<ProfessionalSpeciality> ProfessionalSpecialties => Set<ProfessionalSpeciality>();
+    public DbSet<ProfessionalSpecialty> ProfessionalSpecialties => Set<ProfessionalSpecialty>();
     public DbSet<ProfessionalSchedule> ProfessionalSchedules => Set<ProfessionalSchedule>();
 
     // ==========================================
@@ -200,7 +200,7 @@ public class ApplicationDbContext : DbContext
         });
 
         // Relación Muchos a Muchos: Profesional <-> Especialidad
-        modelBuilder.Entity<ProfessionalSpeciality>(entity =>
+        modelBuilder.Entity<ProfessionalSpecialty>(entity =>
         {
             entity.ToTable("ProfessionalSpecialties");
             entity.HasKey(ps => new { ps.ProfessionalId, ps.SpecialtyId });

@@ -8,7 +8,7 @@ namespace CliniqaxSystem.Domain.Entities
         public string? Description { get; set; }
         public bool IsActive { get; set; } = true;
 
-        public virtual ICollection<ProfessionalSpeciality> ProfessionalSpecialties { get; set; } = new List<ProfessionalSpeciality>();
+        public virtual ICollection<ProfessionalSpecialty> ProfessionalSpecialties { get; set; } = new List<ProfessionalSpecialty>();
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }
