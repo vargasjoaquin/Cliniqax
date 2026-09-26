@@ -1,4 +1,5 @@
-﻿using CliniqaxSystem.Domain.Common;
+﻿using CliniqaxSystem.Application.Interfaces.Services;
+using CliniqaxSystem.Domain.Common;
 using CliniqaxSystem.Domain.Constants;
 using CliniqaxSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,7 @@ public class ApplicationDbContext : DbContext
 {
     private readonly ICurrentUserService _currentUserService;
 
-    public ApplicationDbContext(
-        DbContextOptions<ApplicationDbContext> options,
-        ICurrentUserService currentUserService) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService) : base(options)
     {
         _currentUserService = currentUserService;
     }
