@@ -7,5 +7,6 @@ namespace CliniqaxSystem.Application.Interfaces.Services
     {
         Task<DashboardDto> GetDashboardStatsAsync();
         Task<IEnumerable<AppointmentDto>> GetAppointmentsReportAsync(DateTime start, DateTime end, int? professionalId = null, int? specialtyId = null);
+        Task<IEnumerable<IncomeReportDto>> GetIncomeReportAsync(DateTime start, DateTime end);
     }
 }

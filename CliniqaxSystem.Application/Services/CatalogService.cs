@@ -90,6 +90,26 @@ namespace CliniqaxSystem.Application.Services
                 : OperationResult.Failure("Error al eliminar la especialidad.");
         }
 
+        public async Task<OperationResult> ToggleSpecialtyStatusAsync(int id)
+        {
+            var specialty = await unitOfWork.Specialties.GetByIdAsync(id);
+            
+            if (specialty == null) 
+                return OperationResult.Failure("La especialidad no fue encontrada.");
+
+            specialty.IsActive = !specialty.IsActive;
+            
+            unitOfWork.Specialties.Update(specialty);
+            
+            bool isSuccess = await unitOfWork.CompleteAsync();
+
+            string specialtyState = specialty.IsActive ? "activada" : "desactivada";
+            
+            return isSuccess 
+                ? OperationResult.Ok($"Especialidad {specialtyState} correctamente.") 
+                : OperationResult.Failure("Error al cambiar estado.");
+        }
+
         // ==========================================
         // OBRAS SOCIALES
         // ==========================================
@@ -169,6 +189,26 @@ namespace CliniqaxSystem.Application.Services
             return isSuccess
                 ? OperationResult.Ok("Obra Social dada de baja correctamente.")
                 : OperationResult.Failure("Error al procesar la baja.");
+        }
+
+        public async Task<OperationResult> ToggleHealthInsuranceStatusAsync(int id)
+        {
+            var healthInsurance = await unitOfWork.HealthInsurances.GetByIdAsync(id);
+            
+            if (healthInsurance == null) 
+                return OperationResult.Failure("La Obra Social no fue encontrada.");
+
+            healthInsurance.IsActive = !healthInsurance.IsActive;
+            
+            unitOfWork.HealthInsurances.Update(healthInsurance);
+            
+            bool isSuccess = await unitOfWork.CompleteAsync();
+
+            string healthInsuranceState = healthInsurance.IsActive ? "activada" : "desactivada";
+            
+            return isSuccess
+                ? OperationResult.Ok($"Obra Social {healthInsuranceState} correctamente.") 
+                : OperationResult.Failure("Error al cambiar estado.");
         }
     }
 }

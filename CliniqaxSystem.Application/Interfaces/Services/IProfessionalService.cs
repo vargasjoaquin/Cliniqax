@@ -10,5 +10,6 @@ namespace CliniqaxSystem.Application.Interfaces.Services
         Task<OperationResult> CreateProfessionalAsync(ProfessionalCreateDto professionalCreateDto);
         Task<OperationResult> UpdateProfessionalAsync(ProfessionalUpdateDto professionalUpdateDto);
         Task<OperationResult> DeleteProfessionalAsync(int id);
+        Task<OperationResult> ToggleStatusAsync(int id);
     }
 }

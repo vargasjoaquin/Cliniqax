@@ -9,6 +9,7 @@ namespace CliniqaxSystem.Application.Interfaces.Services
         Task<AppointmentDto?> GetByIdAsync(int id);
         Task<IEnumerable<AppointmentDto>> GetPatientAppointmentsAsync(int patientId);
         Task<IEnumerable<AppointmentDto>> GetAgendaAsync(DateTime date, int professionalId);
+        Task<IEnumerable<AgendaSlotDto>> GetDailyAgendaSlotsAsync(DateTime date, int professionalId);
         Task<IEnumerable<AppointmentDto>> GetAppointmentsByRangeAsync(DateTime start, DateTime end, int? professionalId = null, int? specialtyId = null);
         Task<OperationResult> CreateAppointmentAsync(AppointmentCreateDto appointmentCreateDto);
         Task<OperationResult> ChangeAppointmentStatusAsync(int appointmentId, AppointmentStatus newStatus, string? reason = null);

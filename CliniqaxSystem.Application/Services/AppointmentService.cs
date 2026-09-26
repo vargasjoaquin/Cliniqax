@@ -36,6 +36,50 @@ namespace CliniqaxSystem.Application.Services
             return mapper.Map<IEnumerable<AppointmentDto>>(appointments);
         }
 
+        public async Task<IEnumerable<AgendaSlotDto>> GetDailyAgendaSlotsAsync(DateTime date, int professionalId)
+        {
+            var professional = await unitOfWork.Professionals.GetByIdAsync(professionalId);
+            
+            if (professional == null || !professional.IsActive)
+                return Enumerable.Empty<AgendaSlotDto>();
+
+            var dayOfWeek = date.DayOfWeek;
+            var professionalSchedule = professional.Schedules.FirstOrDefault(s => s.DayOfWeek == dayOfWeek && s.IsActive);
+
+            if (professionalSchedule == null)
+                return Enumerable.Empty<AgendaSlotDto>();
+
+            var existingAppointments = (await unitOfWork.Appointments.GetByDateAndProfessionalAsync(date.Date, professionalId))
+                .Where(a => a.Status != AppointmentStatus.Cancelled)
+                .ToList();
+
+            var slots = new List<AgendaSlotDto>();
+            int slotDurationMinutes = professional.AppointmentDuration > 0 ? professional.AppointmentDuration : 30;
+            var duration = TimeSpan.FromMinutes(slotDurationMinutes);
+
+            var currentStart = professionalSchedule.StartTime;
+            
+            while (currentStart + duration <= professionalSchedule.EndTime)
+            {
+                var currentEnd = currentStart + duration;
+
+                var matchingAppointment = existingAppointments.FirstOrDefault(a =>
+                    a.StartTime < currentEnd && a.EndTime > currentStart);
+
+                slots.Add(new AgendaSlotDto
+                {
+                    StartTime = currentStart,
+                    EndTime = currentEnd,
+                    IsAvailable = matchingAppointment == null,
+                    Appointment = matchingAppointment != null ? mapper.Map<AppointmentDto>(matchingAppointment) : null
+                });
+
+                currentStart = currentEnd;
+            }
+
+            return slots;
+        }
+
         public async Task<OperationResult> CreateAppointmentAsync(AppointmentCreateDto appointmentCreateDto)
         {
             var validation = await createAppointmentValidator.ValidateAsync(appointmentCreateDto);

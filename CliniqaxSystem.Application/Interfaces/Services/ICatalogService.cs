@@ -11,6 +11,7 @@ namespace CliniqaxSystem.Application.Interfaces.Services
         Task<OperationResult> CreateSpecialtyAsync(SpecialtyDto specialtyDto);
         Task<OperationResult> UpdateSpecialtyAsync(SpecialtyDto specialtyDto);
         Task<OperationResult> DeleteSpecialtyAsync(int id);
+        Task<OperationResult> ToggleSpecialtyStatusAsync(int id);
 
 
         // Obras Sociales
@@ -19,5 +20,6 @@ namespace CliniqaxSystem.Application.Interfaces.Services
         Task<OperationResult> CreateHealthInsuranceAsync(HealthInsuranceDto healthInsuranceDto);
         Task<OperationResult> UpdateHealthInsuranceAsync(HealthInsuranceDto healthInsuranceDto);
         Task<OperationResult> DeleteHealthInsuranceAsync(int id);
+        Task<OperationResult> ToggleHealthInsuranceStatusAsync(int id);
     }
 }

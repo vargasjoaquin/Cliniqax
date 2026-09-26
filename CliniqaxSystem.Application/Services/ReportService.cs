@@ -44,5 +44,29 @@ namespace CliniqaxSystem.Application.Services
             var appointments = await unitOfWork.Appointments.GetByDateRangeAsync(start.Date, end.Date, professionalId, specialtyId);
             return mapper.Map<IEnumerable<AppointmentDto>>(appointments);
         }
+
+        public async Task<IEnumerable<IncomeReportDto>> GetIncomeReportAsync(DateTime start, DateTime end)
+        {
+            var cashSessions = await unitOfWork.CashSessions.GetHistoryAsync(start.Date, end.Date.AddDays(1));
+
+            var payments = cashSessions
+                .SelectMany(s => s.Payments)
+                .Where(p => p.CreatedAt.Date >= start.Date && p.CreatedAt.Date <= end.Date)
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new IncomeReportDto
+                {
+                    Date = p.CreatedAt,
+                    ReceiptNumber = p.ReceiptNumber,
+                    PatientName = p.Appointment?.Patient != null ? p.Appointment.Patient.FullName : "Particular",
+                    ProfessionalName = p.Appointment?.Professional != null ? p.Appointment.Professional.FullName : "Sin Asignar",
+                    SpecialtyName = p.Appointment?.Specialty != null ? p.Appointment.Specialty.Name : "Consulta General",
+                    PaymentMethodName = p.PaymentMethod != null ? p.PaymentMethod.Name : "Efectivo",
+                    Amount = p.Amount,
+                    CopayAmount = p.CopayAmount,
+                    CashierName = p.User != null ? p.User.Username : "Recepción"
+                });
+
+            return payments.ToList();
+        }
     }
 }

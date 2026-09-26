@@ -150,5 +150,25 @@ namespace CliniqaxSystem.Application.Services
                 ? OperationResult.Ok("Profesional dado de baja exitosamente.")
                 : OperationResult.Failure("Error al dar de baja al profesional.");
         }
+
+        public async Task<OperationResult> ToggleStatusAsync(int id)
+        {
+            var professional = await unitOfWork.Professionals.GetByIdAsync(id);
+            
+            if (professional == null)
+                return OperationResult.Failure("Profesional no encontrado.");
+
+            professional.IsActive = !professional.IsActive;
+            
+            unitOfWork.Professionals.Update(professional);
+            
+            bool isSuccess = await unitOfWork.CompleteAsync();
+
+            string professionalState = professional.IsActive ? "activado" : "desactivado";
+            
+            return isSuccess
+                ? OperationResult.Ok($"Profesional {professionalState} correctamente.")
+                : OperationResult.Failure("Error al actualizar el estado.");
+        }
     }
 }
