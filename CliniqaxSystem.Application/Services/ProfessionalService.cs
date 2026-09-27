@@ -99,6 +99,8 @@ namespace CliniqaxSystem.Application.Services
             professional.DocumentNumber = professionalUpdateDto.DocumentNumber.Trim();
             professional.LicenseNumber = professionalLicenseNumber;
 
+            professional.AppointmentDuration = professionalUpdateDto.AppointmentDuration;
+
             professional.ProfessionalSpecialties.Clear();
             foreach (var specialtyId in professionalUpdateDto.SpecialtyIds)
             {

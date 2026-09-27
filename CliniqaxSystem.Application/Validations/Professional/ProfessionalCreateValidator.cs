@@ -27,7 +27,8 @@ namespace CliniqaxSystem.Application.Validations.Professional
                 .MaximumLength(30).WithMessage("La matrícula no puede superar los 30 caracteres.");
 
             RuleFor(x => x.AppointmentDuration)
-                .InclusiveBetween(5, 120).WithMessage("La duración del turno debe ser de entre 5 y 120 minutos.");
+                .GreaterThan(0).WithMessage("La duración del turno debe ser mayor a 0 minutos.")
+                .LessThanOrEqualTo(1440).WithMessage("La duración del turno no puede superar las 24 horas (1440 minutos).");
 
             RuleFor(x => x.Phone)
                 .NotEmpty().WithMessage("El teléfono de contacto es obligatorio.")
