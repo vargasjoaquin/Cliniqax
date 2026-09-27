@@ -2,6 +2,6 @@
 {
     public class PatientUpdateDto : PatientCreateDto
     {
-        // Hereda todos los campos de PatientCreateDto e incluye el id
+        public int Id { get; set; }
     }
 }

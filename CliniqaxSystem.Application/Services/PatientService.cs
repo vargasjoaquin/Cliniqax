@@ -70,10 +70,13 @@ namespace CliniqaxSystem.Application.Services
 
             string patientDocumentNumber = patientUpdateDto.DocumentNumber.Trim();
 
-            var existingDocumentNumber = await unitOfWork.Patients.GetByDocumentAsync(patientDocumentNumber);
+            if (!string.Equals(patient.DocumentNumber, patientDocumentNumber, StringComparison.OrdinalIgnoreCase))
+            {
+                var existingDocumentNumber = await unitOfWork.Patients.GetByDocumentAsync(patientDocumentNumber);
 
-            if (existingDocumentNumber != null)
-                return OperationResult.Failure($"El DNI {patientDocumentNumber} ya pertenece a otro paciente.");
+                if (existingDocumentNumber != null)
+                    return OperationResult.Failure($"El DNI {patientDocumentNumber} ya pertenece a otro paciente.");
+            }
 
             mapper.Map(patientUpdateDto, patient);
             patient.DocumentNumber = patientDocumentNumber;
