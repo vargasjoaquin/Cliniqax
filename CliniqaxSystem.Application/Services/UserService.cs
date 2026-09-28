@@ -11,9 +11,10 @@ namespace CliniqaxSystem.Application.Services
 {
     public class UserService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, IMapper mapper, IValidator<UserCreateDto> createUserValidator, IValidator<UserProfileUpdateDto> updateProfileUserValidator) : IUserService
     {
-        public Task<IEnumerable<UserDto>> GetUserListAsync()
+        public async Task<IEnumerable<UserDto>> GetUserListAsync()
         {
-            throw new NotImplementedException();
+            var users = await unitOfWork.Users.GetAllAsync();
+            return mapper.Map<IEnumerable<UserDto>>(users);
         }
 
         public async  Task<UserDto?> GetByIdAsync(int id)
@@ -22,9 +23,9 @@ namespace CliniqaxSystem.Application.Services
             return user == null ? null : mapper.Map<UserDto>(user);
         }
 
-        public Task<IEnumerable<Role>> GetRolesAsync()
+        public async Task<IEnumerable<Role>> GetRolesAsync()
         {
-            throw new NotImplementedException();
+           return await unitOfWork.Roles.GetAllAsync();
         }
 
         public async Task<OperationResult> CreateUserAsync(UserCreateDto userCreateDto)
