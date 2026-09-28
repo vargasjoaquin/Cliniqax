@@ -18,7 +18,12 @@ namespace CliniqaxSystem.Application.Services
         public async Task<CashSessionDto?> GetActiveSessionAsync()
         {
             var cashSession = await unitOfWork.CashSessions.GetActiveSessionAsync();
-            return cashSession == null ? null : mapper.Map<CashSessionDto>(cashSession);
+
+            if (cashSession == null)
+                return null;
+
+            var detailedCashSession = await unitOfWork.CashSessions.GetByIdAsync(cashSession.Id) ?? cashSession;
+            return BuildCashSession(detailedCashSession);
         }
 
         public async Task<CashSessionDto?> GetCurrentSessionSummaryAsync()
@@ -33,7 +38,7 @@ namespace CliniqaxSystem.Application.Services
 
             var detailedCashSession = await unitOfWork.CashSessions.GetByIdAsync(cashSession.Id);
 
-            return mapper.Map<CashSessionDto>(detailedCashSession);
+            return BuildCashSession(detailedCashSession);
         }
 
         public async Task<OperationResult> OpenSessionAsync(CashSessionOpenDto cashSessionOpenDto)
@@ -233,9 +238,67 @@ namespace CliniqaxSystem.Application.Services
             if (activeCashSession == null)
                 return Enumerable.Empty<CashMovementDto>();
 
-            var movements = await unitOfWork.CashSessions.GetMovementsBySessionIdAsync(activeCashSession.Id);
+            var cashMovements = await unitOfWork.CashSessions.GetMovementsBySessionIdAsync(activeCashSession.Id);
            
-            return mapper.Map<IEnumerable<CashMovementDto>>(movements);
+            return mapper.Map<IEnumerable<CashMovementDto>>(cashMovements);
+        }
+
+        private static CashSessionDto BuildCashSession(CashSession cashSession)
+        {
+            bool isClosedCashSession = cashSession.Status == CashSessionStatusesConstants.CLOSED;
+            var consultationPayments = cashSession.Payments?.ToList() ?? new List<ConsultationPayment>();
+            var cashMovements = cashSession.CashMovements?.ToList() ?? new List<CashMovement>();
+
+            decimal cashIncome = isClosedCashSession
+                ? cashSession.TotalCashIncome
+                : consultationPayments.Where(p => p.PaymentMethodId == PaymentMethodConstants.CASH_ID).Sum(p => p.Amount);
+
+            decimal debitIncome = isClosedCashSession
+                ? cashSession.TotalDebitIncome
+                : consultationPayments.Where(p => p.PaymentMethodId == PaymentMethodConstants.DEBIT_CARD_ID).Sum(p => p.Amount);
+
+            decimal creditIncome = isClosedCashSession
+                ? cashSession.TotalCreditIncome
+                : consultationPayments.Where(p => p.PaymentMethodId == PaymentMethodConstants.CREDIT_CARD_ID).Sum(p => p.Amount);
+
+            decimal transferIncome = isClosedCashSession
+                ? cashSession.TotalTransferIncome
+                : consultationPayments.Where(p => p.PaymentMethodId == PaymentMethodConstants.BANK_TRANSFER_ID).Sum(p => p.Amount);
+
+            decimal qrIncome = isClosedCashSession
+                ? cashSession.TotalQrIncome
+                : consultationPayments.Where(p => p.PaymentMethodId == PaymentMethodConstants.MERCADO_PAGO_QR_ID).Sum(p => p.Amount);
+
+            decimal manualIn = isClosedCashSession
+                ? cashSession.TotalManualCashIn
+                : cashMovements.Where(m => m.MovementType == CashMovementType.CashIn).Sum(m => m.Amount);
+
+            decimal manualOut = isClosedCashSession
+                ? cashSession.TotalManualCashOut
+                : cashMovements.Where(m => m.MovementType == CashMovementType.CashOut).Sum(m => m.Amount);
+
+            return new CashSessionDto
+            {
+                Id = cashSession.Id,
+                UserId = cashSession.UserId,
+                UserName = cashSession.User != null ? $"{cashSession.User.LastName} {cashSession.User.FirstName}".Trim() : string.Empty,
+                StationName = cashSession.StationName,
+                OpeningDate = cashSession.OpeningDate,
+                ClosingDate = cashSession.ClosingDate,
+                InitialCash = cashSession.InitialCash,
+                RealCash = cashSession.RealCash,
+                ExpectedCash = cashSession.ExpectedCash,
+                Difference = cashSession.Difference,
+                TotalCashIncome = cashIncome,
+                TotalDebitIncome = debitIncome,
+                TotalCreditIncome = creditIncome,
+                TotalTransferIncome = transferIncome,
+                TotalQrIncome = qrIncome,
+                TotalManualCashIn = manualIn,
+                TotalManualCashOut = manualOut,
+                Status = cashSession.Status,
+                ClosingNotes = cashSession.ClosingNotes
+            };
         }
     }
 }
