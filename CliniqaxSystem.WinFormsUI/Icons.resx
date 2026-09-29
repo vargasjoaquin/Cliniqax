@@ -166,6 +166,9 @@
   <data name="clinical_reprogramar_turno" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\clinical_reprogramar_turno.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="logo_cliniqax" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\logo_cliniqax.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="nav_agenda_medica" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\nav_agenda_medica.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
