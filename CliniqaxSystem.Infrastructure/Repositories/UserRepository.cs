@@ -44,7 +44,7 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             context.Users.Update(user);
         }
 
-        public async Task<User?> DeleteAsync(int id)
+        public async Task<User?> GetDeletedByIdAsync(int id)
         {
             return await context.Users
                 .IgnoreQueryFilters()

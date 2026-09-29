@@ -33,7 +33,11 @@ namespace CliniqaxSystem.Application.Services
             string professionalDocumentNumber = professionalCreateDto.DocumentNumber.Trim();
             string professionalLicenseNumber = professionalCreateDto.LicenseNumber.Trim();
 
-            var existingDocumentNumber = await unitOfWork.Professionals.GetByIdAsync(0); 
+            var existingDocumentNumber = await unitOfWork.Professionals.GetByDocumentAsync(professionalDocumentNumber);
+
+            if (existingDocumentNumber != null)
+                return OperationResult.Failure($"El DNI '{professionalDocumentNumber}' ya pertenece a otro profesional registrado.");
+
             var existingLicenseNumber = await unitOfWork.Professionals.GetByLicenseNumberAsync(professionalLicenseNumber);
 
             if (existingLicenseNumber != null)
@@ -83,12 +87,18 @@ namespace CliniqaxSystem.Application.Services
                 return validation.ToResult();
 
             var professional = await unitOfWork.Professionals.GetByIdAsync(professionalUpdateDto.Id);
-            
-            if (professional == null)
-                return OperationResult.Failure("Profesional no encontrado.");
 
+            if (professional == null)
+                return OperationResult.Failure($"El profesional con ID {professionalUpdateDto.Id} no fue encontrado.");
+
+            string professionalDocumentNumber = professionalUpdateDto.DocumentNumber.Trim();
             string professionalLicenseNumber = professionalUpdateDto.LicenseNumber.Trim();
-            
+
+            var existingDocumentNumber = await unitOfWork.Professionals.GetByDocumentAsync(professionalDocumentNumber);
+
+            if (existingDocumentNumber != null && existingDocumentNumber.Id != professionalUpdateDto.Id)
+                return OperationResult.Failure($"El DNI '{professionalDocumentNumber}' ya pertenece a otro profesional registrado.");
+
             var existingLicenseNumber = await unitOfWork.Professionals.GetByLicenseNumberAsync(professionalLicenseNumber);
             
             if (existingLicenseNumber != null && existingLicenseNumber.Id != professionalUpdateDto.Id)
@@ -137,9 +147,9 @@ namespace CliniqaxSystem.Application.Services
         public async Task<OperationResult> DeleteProfessionalAsync(int id)
         {
             var professional = await unitOfWork.Professionals.GetByIdAsync(id);
-            
+
             if (professional == null)
-                return OperationResult.Failure("Profesional no encontrado.");
+                return OperationResult.Failure($"El profesional con ID {id} no fue encontrado.");
 
             professional.IsDeleted = true;
             professional.IsActive = false;

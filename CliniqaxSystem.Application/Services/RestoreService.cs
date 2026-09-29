@@ -82,7 +82,7 @@ namespace CliniqaxSystem.Application.Services
             {
                 case "PACIENTES":
                     
-                    var patient = await unitOfWork.Patients.DeleteAsync(id);
+                    var patient = await unitOfWork.Patients.GetDeletedByIdAsync(id);
                     
                     if (patient == null) 
                         return OperationResult.Failure("Paciente no encontrado en papelera.");
@@ -95,7 +95,7 @@ namespace CliniqaxSystem.Application.Services
 
                 case "PROFESIONALES":
                     
-                    var professional = await unitOfWork.Professionals.DeleteAsync(id);
+                    var professional = await unitOfWork.Professionals.GetDeletedByIdAsync(id);
                     
                     if (professional == null) 
                         return OperationResult.Failure("Profesional no encontrado en papelera.");
@@ -108,7 +108,7 @@ namespace CliniqaxSystem.Application.Services
 
                 case "ESPECIALIDADES":
                     
-                    var specialty = await unitOfWork.Specialties.DeleteAsync(id);
+                    var specialty = await unitOfWork.Specialties.GetDeletedByIdAsync(id);
                     
                     if (specialty == null) 
                         return OperationResult.Failure("Especialidad no encontrada en papelera.");
@@ -121,7 +121,7 @@ namespace CliniqaxSystem.Application.Services
 
                 case "OBRAS SOCIALES":
                     
-                    var healthInsurance = await unitOfWork.HealthInsurances.DeleteAsync(id);
+                    var healthInsurance = await unitOfWork.HealthInsurances.GetDeletedByIdAsync(id);
                     
                     if (healthInsurance == null) 
                         return OperationResult.Failure("Obra social no encontrada en papelera.");
@@ -134,7 +134,7 @@ namespace CliniqaxSystem.Application.Services
 
                 case "USUARIOS":
                     
-                    var user = await unitOfWork.Users.DeleteAsync(id);
+                    var user = await unitOfWork.Users.GetDeletedByIdAsync(id);
                     
                     if (user == null) 
                         return OperationResult.Failure("Usuario no encontrado en papelera.");

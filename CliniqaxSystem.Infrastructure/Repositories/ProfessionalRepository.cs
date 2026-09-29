@@ -34,6 +34,12 @@ namespace CliniqaxSystem.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.LicenseNumber == licenseNumber);
         }
 
+        public async Task<Professional?> GetByDocumentAsync(string documentNumber)
+        {
+            return await context.Professionals
+                .FirstOrDefaultAsync(p => p.DocumentNumber == documentNumber);
+        }
+
         public async Task AddAsync(Professional p)
         {
             await context.Professionals.AddAsync(p);
@@ -44,7 +50,7 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             context.Professionals.Update(p);
         }
 
-        public async Task<Professional?> DeleteAsync(int id)
+        public async Task<Professional?> GetDeletedByIdAsync(int id)
         {
             return await context.Professionals
                 .IgnoreQueryFilters()

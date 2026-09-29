@@ -30,7 +30,7 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             context.HealthInsurances.Update(insurance);
         }
 
-        public async Task<HealthInsurance?> DeleteAsync(int id)
+        public async Task<HealthInsurance?> GetDeletedByIdAsync(int id)
         {
             return await context.HealthInsurances
                 .IgnoreQueryFilters()

@@ -155,7 +155,7 @@ namespace CliniqaxSystem.Application.Services
         {
             var validation = await rescheduleAppointmentValidtor.ValidateAsync(appointmentRescheduleDto);
 
-            if (validation != null)
+            if (!validation.IsValid)
                 return validation.ToResult();
 
             var appointment = await unitOfWork.Appointments.GetByIdAsync(appointmentRescheduleDto.AppointmentId);

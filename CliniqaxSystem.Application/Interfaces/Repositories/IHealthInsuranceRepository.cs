@@ -8,7 +8,7 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         Task<HealthInsurance?> GetByIdAsync(int id);
         Task AddAsync(HealthInsurance insurance);
         void Update(HealthInsurance insurance);
-        Task<HealthInsurance?> DeleteAsync(int id);
+        Task<HealthInsurance?> GetDeletedByIdAsync(int id);
         Task<IEnumerable<HealthInsurance>> GetAllDeletedAsync();
     }
 }

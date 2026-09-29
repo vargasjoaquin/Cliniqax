@@ -13,7 +13,7 @@ namespace CliniqaxSystem.Infrastructure.Repositories
                 .AsNoTracking()
                 .Include(patient => patient.HealthInsurance)
                 .OrderBy(patient => patient.LastName)
-                .ThenBy(patient => patient.LastName)
+                .ThenBy(patient => patient.FirstName)
                 .ToListAsync();
         }
 
@@ -41,7 +41,7 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             context.Patients.Update(patient);
         }
 
-        public async Task<Patient?> DeleteAsync(int id)
+        public async Task<Patient?> GetDeletedByIdAsync(int id)
         {
             return await context.Patients
                 .IgnoreQueryFilters()

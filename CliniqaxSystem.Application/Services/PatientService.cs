@@ -3,7 +3,6 @@ using CliniqaxSystem.Application.Common;
 using CliniqaxSystem.Application.DTOs.Patient;
 using CliniqaxSystem.Application.Interfaces.Repositories;
 using CliniqaxSystem.Application.Interfaces.Services;
-using CliniqaxSystem.Application.Validations.Patient;
 using CliniqaxSystem.Domain.Entities;
 using FluentValidation;
 
@@ -66,7 +65,7 @@ namespace CliniqaxSystem.Application.Services
             var patient = await unitOfWork.Patients.GetByIdAsync(patientUpdateDto.Id);
 
             if (patient == null)
-                return OperationResult.Failure($"El paciente {patient} no fue encontrado.");
+                return OperationResult.Failure($"El paciente con ID {patientUpdateDto.Id} no fue encontrado.");
 
             string patientDocumentNumber = patientUpdateDto.DocumentNumber.Trim();
 
@@ -93,9 +92,9 @@ namespace CliniqaxSystem.Application.Services
         public async Task<OperationResult> DeletePatientAsync(int id)
         {
             var patient = await unitOfWork.Patients.GetByIdAsync(id);
-            
-            if (patient ==  null)
-                return OperationResult.Failure($"El paciente {patient} no fue encontrado.");
+
+            if (patient == null)
+                return OperationResult.Failure($"El paciente con ID {id} no fue encontrado.");
 
             patient.IsDeleted = true;
             patient.IsActive = false;

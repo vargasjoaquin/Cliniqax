@@ -8,7 +8,7 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         Task<Specialty?> GetByIdAsync(int id);
         Task AddAsync(Specialty specialty);
         void Update(Specialty specialty);
-        Task<Specialty?> DeleteAsync(int id);
+        Task<Specialty?> GetDeletedByIdAsync(int id);
         Task<IEnumerable<Specialty>> GetAllDeletedAsync();
     }
 }

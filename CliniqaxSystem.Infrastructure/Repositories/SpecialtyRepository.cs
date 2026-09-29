@@ -30,7 +30,7 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             context.Specialties.Update(specialty);
         }
 
-        public async Task<Specialty?> DeleteAsync(int id)
+        public async Task<Specialty?> GetDeletedByIdAsync(int id)
         {
             return await context.Specialties
                 .IgnoreQueryFilters()

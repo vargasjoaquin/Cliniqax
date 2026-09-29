@@ -16,10 +16,10 @@ namespace CliniqaxSystem.Application.Services
             var user = await unitOfWork.Users.GetByUsernameAsync(username);
 
             if (user == null)
-                return OperationResult.Failure($"El usuario '{user}' no existe en el sistema.");
+                return OperationResult.Failure($"El usuario '{username}' no existe en el sistema.");
 
             if (!user.IsActive)
-                return OperationResult.Failure($"La cuenta de usuario '{user}' se encuenta inactiva. Contacte con el administrador.");
+                return OperationResult.Failure($"La cuenta de usuario '{user.Username}' se encuentra inactiva. Contacte con el administrador.");
 
             bool isPasswordValid = passwordHasher.VerifyHashPassword(password, user.Password);
 

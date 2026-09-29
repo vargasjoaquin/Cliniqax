@@ -9,7 +9,7 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         Task<User?> GetByUsernameAsync(string username);
         Task AddAsync(User user);
         void Update(User user);
-        Task<User?> DeleteAsync(int id);
+        Task<User?> GetDeletedByIdAsync(int id);
         Task<IEnumerable<User>> GetAllDeletedAsync();
     }
 }
