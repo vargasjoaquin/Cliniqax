@@ -3,6 +3,7 @@
     public static class FormatterHelper
     {
         private static bool _isFormatting = false;
+        private static bool _isFormattingKey = false;
 
         public static void HandleCuitFormat(TextBox textBox)
         {
@@ -42,6 +43,70 @@
 
             textBox.SelectionStart = newSelectionStart;
             _isFormatting = false;
+        }
+
+        public static void HandleLicenseKeyChange(TextBox currentEdit, TextBox? nextEdit, TextBox key1, TextBox key2, TextBox key3, TextBox key4)
+        {
+            if (_isFormattingKey)
+                return;
+
+            string rawText = new string(currentEdit.Text.Where(char.IsLetterOrDigit).ToArray()).ToUpper();
+
+            if (rawText.Length >= 16 || (rawText.Length > 4 && nextEdit != null))
+            {
+                _isFormattingKey = true;
+
+                try
+                {
+                    key1.Text = rawText.Length >= 4 ? rawText.Substring(0, 4) : rawText;
+                    key2.Text = rawText.Length >= 8 ? rawText.Substring(4, 4) : (rawText.Length > 4 ? rawText.Substring(4) : string.Empty);
+                    key3.Text = rawText.Length >= 12 ? rawText.Substring(8, 4) : (rawText.Length > 8 ? rawText.Substring(8) : string.Empty);
+                    key4.Text = rawText.Length >= 16 ? rawText.Substring(12, 4) : (rawText.Length > 12 ? rawText.Substring(12) : string.Empty);
+
+                    key4.Focus();
+                    key4.SelectionStart = key4.Text.Length;
+                }
+                finally
+                {
+                    _isFormattingKey = false;
+                }
+                return;
+            }
+
+            if (nextEdit == null && rawText.Length > 4)
+            {
+                rawText = rawText.Substring(0, 4);
+            }
+
+            if (currentEdit.Text != rawText)
+            {
+                _isFormattingKey = true;
+
+                try
+                {
+                    currentEdit.Text = rawText;
+                    currentEdit.SelectionStart = rawText.Length;
+                }
+                finally
+                {
+                    _isFormattingKey = false;
+                }
+            }
+
+            if (rawText.Length == 4 && nextEdit != null && currentEdit.Focused)
+            {
+                nextEdit.Focus();
+                nextEdit.SelectAll();
+            }
+        }
+
+        public static void HandleLicenseKeyBackspace(TextBox currentEdit, TextBox prevEdit, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Back && currentEdit.SelectionStart == 0 && currentEdit.SelectionLength == 0)
+            {
+                prevEdit.Focus();
+                prevEdit.SelectionStart = prevEdit.Text.Length;
+            }
         }
     }
 }
