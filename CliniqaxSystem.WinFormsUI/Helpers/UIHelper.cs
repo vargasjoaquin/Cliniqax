@@ -8,13 +8,16 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
         {
             foreach (Control c in container.Controls)
             {
+                if (c is Button)
+                    continue;
+
                 if (c is TextBox t)
                     t.Clear();
                 else if (c is ComboBox cb)
                     cb.SelectedIndex = -1;
                 else if (c is NumericUpDown n)
                     n.Value = n.Minimum;
-                else if (c is PictureBox p)
+                else if (c is PictureBox p && !p.Name.StartsWith("picIcon"))
                     p.Image = null;
 
                 if (c.HasChildren && c is not DataGridView)
@@ -37,77 +40,94 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
 
         private static readonly Dictionary<string, string> _translations = new()
         {
-            // Pacientes
+            // 1. Pacientes
             { "DocumentNumber", "DNI / Documento" },
             { "FirstName", "Nombre" },
             { "LastName", "Apellido" },
-            { "FullName", "Paciente" },
+            { "FullName", "Nombre Completo" },
             { "BirthDate", "Fecha Nacimiento" },
             { "Age", "Edad" },
             { "Phone", "Teléfono" },
             { "Email", "Correo Electrónico" },
             { "Address", "Dirección" },
-            { "City", "Ciudad" },
+            { "City", "Ciudad / Localidad" },
             { "HealthInsuranceName", "Obra Social / Prepaga" },
-            { "AffiliateNumber", "N.° Afiliado" },
-            { "AdministrativeNotes", "Observaciones Administrativas" },
+            { "AffiliateNumber", "N.° Afiliado / Carnet" },
+            { "AdministrativeNotes", "Notas Administrativas" },
 
-            // Profesionales
-            { "LicenseNumber", "Matrícula" },
+            // 2. Profesionales y Médicos
+            { "LicenseNumber", "Matrícula Profesional" },
+            { "AppointmentDuration", "Duración Turno (min)" },
             { "AppointmentDurationMinutes", "Duración Turno (min)" },
             { "Observations", "Observaciones" },
             { "SpecialtyName", "Especialidad" },
-            { "ProfessionalName", "Profesional" },
+            { "SpecialtyNames", "Especialidades" },
+            { "ProfessionalName", "Profesional / Médico" },
+            { "DayName", "Día de Atención" },
 
-            // Turnos y Agenda
-            { "AppointmentDate", "Fecha Turno" },
+            // 3. Turnos y Agenda
+            { "AppointmentDate", "Fecha del Turno" },
             { "StartTime", "Hora Inicio" },
             { "EndTime", "Hora Fin" },
             { "TimeSlot", "Horario" },
-            { "StatusName", "Estado Turno" },
+            { "TimeRange", "Franja Horaria" },
+            { "StatusName", "Estado del Turno" },
             { "PatientName", "Paciente" },
             { "PatientDocument", "DNI Paciente" },
-            { "PatientPhone", "Teléfono" },
-            { "CancellationReason", "Motivo Cancelación" },
-            { "TimeRange", "Franja Horaria" },
+            { "PatientPhone", "Teléfono Paciente" },
+            { "CancellationReason", "Motivo de Cancelación" },
+            { "IsAvailable", "¿Disponible?" },
 
-            // Caja y Finanzas
-            { "StationName", "Recepción / Puesto" },
-            { "OpeningDate", "Apertura" },
-            { "ClosingDate", "Cierre" },
+            // 4. Caja Diaria, Cobros y Finanzas
+            { "StationName", "Puesto / Recepción" },
+            { "OpeningDate", "Fecha Apertura" },
+            { "ClosingDate", "Fecha Cierre" },
             { "InitialCash", "Fondo Inicial" },
             { "RealCash", "Efectivo Contado" },
             { "ExpectedCash", "Efectivo Esperado" },
-            { "Difference", "Diferencia" },
-            { "TotalCashIncome", "Ingresos Efectivo" },
-            { "TotalDebitIncome", "Ingresos Débito" },
-            { "TotalCreditIncome", "Ingresos Crédito" },
-            { "TotalTransferIncome", "Ingresos Transferencia" },
-            { "TotalQrIncome", "Ingresos QR" },
+            { "Difference", "Diferencia / Balance" },
+            { "TotalCashIncome", "Cobros Efectivo" },
+            { "TotalDebitIncome", "Cobros Débito" },
+            { "TotalCreditIncome", "Cobros Crédito" },
+            { "TotalTransferIncome", "Cobros Transferencia" },
+            { "TotalQrIncome", "Cobros QR / Digital" },
             { "TotalManualCashIn", "Ingresos Manuales" },
             { "TotalManualCashOut", "Egresos / Retiros" },
             { "CurrentSystemCash", "Efectivo en Gaveta" },
             { "TotalTurnover", "Total Recaudado" },
-            { "MovementTypeName", "Tipo Movimiento" },
-            { "Amount", "Importe" },
-            { "CopayAmount", "Copago" },
+            { "MovementTypeName", "Tipo de Movimiento" },
+            { "Amount", "Importe Total" },
+            { "CopayAmount", "Copago / Coseguro" },
+            { "PaymentReceived", "Monto Recibido" },
+            { "PaymentChange", "Vuelto Entregado" },
             { "ReceiptNumber", "N.° Comprobante" },
             { "PaymentMethodName", "Medio de Pago" },
-            { "ClosingNotes", "Observaciones Cierre" },
+            { "CashierName", "Receptor / Operador" },
+            { "ClosingNotes", "Observaciones de Cierre" },
 
-            // Seguridad
-            { "UserName", "Usuario" },
-            { "Username", "Usuario" },
-            { "RoleName", "Rol" },
+            // 5. Catálogos y Ajustes Institucionales
+            { "Name", "Nombre / Denominación" },
+            { "Description", "Descripción / Alcance" },
+            { "Cuit", "CUIT Oficial" },
+            { "CUIT", "CUIT Oficial" },
+            { "ClinicName", "Nombre del Consultorio" },
+            { "ReceiptFormat", "Formato Recibo" },
+            { "ReceiptFooterMessage", "Pie del Recibo" },
+
+            // 6. Seguridad y Usuarios
+            { "UserName", "Operador / Cajero" },
+            { "Username", "Usuario (Login)" },
+            { "RoleName", "Rol de Acceso" },
             { "Status", "Estado" },
 
-            // Auditoría / Papelera
-            { "EntityType", "Módulo" },
+            // 7. Papelera de Reciclaje / Auditoría
+            { "EntityType", "Módulo / Padrón" },
             { "Identifier", "Identificador" },
-            { "Name", "Nombre / Detalle" },
             { "AdditionalInfo", "Información Extra" },
-            { "DeletedAt", "Fecha Baja" },
-            { "DeletedBy", "Dado de baja por" }
+            { "DeletedAt", "Fecha de Baja" },
+            { "DeletedBy", "Dado de baja por" },
+            { "CreatedAt", "Fecha de Alta" },
+            { "CreatedBy", "Registrado por" }
         };
 
         public static void FormatGrid(DataGridView dgv)
@@ -138,13 +158,15 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             dgv.RowTemplate.Height = 30;
 
             string[] columnsToHide = {
-            "Id", "IsDeleted", "RowVersion", "IsActive", "Status",
-            "RoleId", "SpecialtyId", "ProfessionalId", "PatientId", "HealthInsuranceId",
-            "UserId", "CashSessionId", "AppointmentId", "PaymentMethodId",
-            "Photo", "Logo", "LogoBytes", "Password", "NewPassword", "CurrentPassword",
-            "SpecialtyIds", "SpecialtyNames", "Schedules", "Payments", "CashMovements",
-            "HasClinicalEvolution"
-            };
+                "Id", "IsDeleted", "RowVersion", "IsActive", "Status", "Password", "NewPassword", "CurrentPassword",
+                "RoleId", "SpecialtyId", "ProfessionalId", "PatientId", "HealthInsuranceId",
+                "UserId", "CashSessionId", "AppointmentId", "PaymentMethodId",
+                "Photo", "Logo", "LogoBytes", "SpecialtyIds", "SpecialtyNames", "Schedules",
+                "Payments", "CashMovements", "Appointments", "ProfessionalSpecialties",
+                "HasClinicalHistory", "HasClinicalEvolution", "ShowLogoOnReceipt", "AutoPrintReceipt",
+                "ThermalPrinterName", "HealthInsurance", "Professional", "Specialty", "Patient",
+                "User", "Role", "CashSession", "Appointment", "PaymentMethod", "ClinicSettings"
+             };
 
             foreach (var colName in columnsToHide)
             {
@@ -172,8 +194,8 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
                     dgv.Columns[col].DefaultCellStyle.Format = "C2";
             }
 
-            string[] dateCols = { "BirthDate", "AppointmentDate", "Date", "CreatedAt", "DeletedAt", "OpeningDate", "ClosingDate" };
-            
+            string[] dateCols = { "BirthDate", "AppointmentDate", "Date", "CreatedAt", "DeletedAt", "OpeningDate", "ClosingDate", "LastUpdatedAt" };
+
             foreach (var col in dateCols)
             {
                 if (dgv.Columns.Contains(col))
