@@ -29,8 +29,31 @@
             icon.Enabled = false;
             icon.BringToFront();
 
-            button.EnabledChanged += (s, e) => icon.Visible = button.Visible && button.Enabled;
+            Color originalBackColor = button.BackColor;
+            Color originalForeColor = button.ForeColor;
+
+            void UpdateVisualState()
+            {
+                icon.Visible = button.Visible;
+
+                if (button.Enabled)
+                {
+                    button.BackColor = originalBackColor;
+                    button.ForeColor = originalForeColor;
+                    button.Cursor = Cursors.Hand;
+                }
+                else
+                {
+                    button.BackColor = Color.FromArgb(226, 232, 240);
+                    button.ForeColor = Color.FromArgb(148, 163, 184);
+                    button.Cursor = Cursors.Default;
+                }
+            }
+
+            button.EnabledChanged += (s, e) => UpdateVisualState();
             button.VisibleChanged += (s, e) => icon.Visible = button.Visible;
+
+            UpdateVisualState();
         }
     }
 }
