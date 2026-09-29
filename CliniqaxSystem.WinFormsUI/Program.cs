@@ -1,6 +1,8 @@
 using CliniqaxSystem.Application;
+using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.Infrastructure;
 using CliniqaxSystem.Infrastructure.Persistence;
+using CliniqaxSystem.WinFormsUI.Helpers.Dialogs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
