@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37516.0 d17.14
+VisualStudioVersion = 17.14.37516.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliniqaxSystem.WinFormsUI", "CliniqaxSystem.WinFormsUI\CliniqaxSystem.WinFormsUI.csproj", "{7DA802E3-A2BC-45B1-8D37-F1BAF64BC611}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliniqaxSystem.Application", "CliniqaxSystem.Application\CliniqaxSystem.Application.csproj", "{E005D4E2-55E5-4F9F-A6D7-34371629DDA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliniqaxSystem.Infrastructure", "CliniqaxSystem.Infrastructure\CliniqaxSystem.Infrastructure.csproj", "{6314D4CF-86FC-4671-881D-11F04831AB07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliniqaxSystem.SetupActivator", "CliniqaxSystem.SetupActivator\CliniqaxSystem.SetupActivator.csproj", "{36AC1D33-64E2-4BDA-A94B-E9A7948840BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{6314D4CF-86FC-4671-881D-11F04831AB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6314D4CF-86FC-4671-881D-11F04831AB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6314D4CF-86FC-4671-881D-11F04831AB07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36AC1D33-64E2-4BDA-A94B-E9A7948840BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36AC1D33-64E2-4BDA-A94B-E9A7948840BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36AC1D33-64E2-4BDA-A94B-E9A7948840BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36AC1D33-64E2-4BDA-A94B-E9A7948840BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
