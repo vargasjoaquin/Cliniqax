@@ -130,7 +130,6 @@ namespace CliniqaxSystem.WinFormsUI
 
             string message = $"¿Desea restaurar este registro?\n\n" +
                              $"Módulo: {_selectedItem.EntityType}\n" +
-                             $"Identificador: {_selectedItem.Identifier}\n" +
                              $"Detalle: {_selectedItem.Name}\n\n" +
                              $"Volverá a estar activo y disponible en el sistema.";
 

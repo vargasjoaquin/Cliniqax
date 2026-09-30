@@ -147,7 +147,7 @@ namespace CliniqaxSystem.WinFormsUI
                     var gridViewData = _currentSlots.Select(s => new
                     {
                         Horario = s.TimeRange,
-                        Estado = s.IsAvailable ? "[ DISPONIBLE ]" : s.Appointment?.StatusName,
+                        Estado = s.IsAvailable ? "DISPONIBLE" : s.Appointment?.StatusName,
                         Paciente = s.IsAvailable ? "-" : s.Appointment?.PatientName,
                         DNI = s.IsAvailable ? "-" : s.Appointment?.PatientDocument,
                         Telefono = s.IsAvailable ? "-" : s.Appointment?.PatientPhone,
@@ -180,7 +180,7 @@ namespace CliniqaxSystem.WinFormsUI
 
             if (_selectedSlot.IsAvailable)
             {
-                labelSelectedSlotInfo.Text = $"Franja Seleccionada: {_selectedSlot.TimeRange}  [ DISPONIBLE ]";
+                labelSelectedSlotInfo.Text = $"Franja Seleccionada: {_selectedSlot.TimeRange}  DISPONIBLE";
                 labelSelectedSlotInfo.ForeColor = UIThemeHelper.Success;
 
                 buttonBookSlot.Enabled = true;
@@ -295,7 +295,7 @@ namespace CliniqaxSystem.WinFormsUI
 
             var estado = dataGridViewAgenda.Rows[e.RowIndex].Cells["Estado"].Value?.ToString();
 
-            if (estado == "[ DISPONIBLE ]")
+            if (estado == "DISPONIBLE")
             {
                 e.CellStyle.ForeColor = UIThemeHelper.Success;
                 e.CellStyle.SelectionForeColor = Color.LimeGreen;

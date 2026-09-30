@@ -62,14 +62,14 @@ namespace CliniqaxSystem.WinFormsUI
                 {
                     // Cargar Médicos
                     var professionals = (await _professionalService.GetAllAsync()).ToList();
-                    professionals.Insert(0, new ProfessionalDto { Id = 0, FirstName = "[ Todos los ", LastName = "Profesionales ]" });
+                    professionals.Insert(0, new ProfessionalDto { Id = 0, FirstName = "Todos los ", LastName = "Profesionales" });
                     comboBoxProfessional.DataSource = professionals;
                     comboBoxProfessional.DisplayMember = "FullName";
                     comboBoxProfessional.ValueMember = "Id";
 
                     // Cargar Especialidades
                     var specialties = (await _catalogService.GetSpecialtiesAsync()).ToList();
-                    specialties.Insert(0, new SpecialtyDto { Id = 0, Name = "[ Todas las Especialidades ]" });
+                    specialties.Insert(0, new SpecialtyDto { Id = 0, Name = "Todas las Especialidades" });
                     comboBoxSpecialty.DataSource = specialties;
                     comboBoxSpecialty.DisplayMember = "Name";
                     comboBoxSpecialty.ValueMember = "Id";

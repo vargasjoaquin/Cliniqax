@@ -78,14 +78,14 @@ namespace CliniqaxSystem.WinFormsUI
                 {
                     // 1. Cargar Médicos
                     var professionals = (await _professionalService.GetAllAsync()).ToList();
-                    professionals.Insert(0, new ProfessionalDto { Id = 0, FirstName = "[ Todos los ", LastName = "Profesionales ]" });
+                    professionals.Insert(0, new ProfessionalDto { Id = 0, FirstName = "Todos los ", LastName = "Profesionales" });
                     comboBoxProfessional.DataSource = professionals;
                     comboBoxProfessional.DisplayMember = "FullName";
                     comboBoxProfessional.ValueMember = "Id";
 
                     // 2. Cargar Especialidades
                     var specialties = (await _catalogService.GetSpecialtiesAsync()).ToList();
-                    specialties.Insert(0, new SpecialtyDto { Id = 0, Name = "[ Todas las Especialidades ]" });
+                    specialties.Insert(0, new SpecialtyDto { Id = 0, Name = "Todas las Especialidades" });
                     comboBoxSpecialty.DataSource = specialties;
                     comboBoxSpecialty.DisplayMember = "Name";
                     comboBoxSpecialty.ValueMember = "Id";
@@ -93,7 +93,7 @@ namespace CliniqaxSystem.WinFormsUI
                     // 3. Cargar Estados de Turno
                     var statuses = new List<object>
                 {
-                    new { Id = 0, Name = "[ Todos los Estados ]" },
+                    new { Id = 0, Name = "Todos los Estados" },
                     new { Id = (int)AppointmentStatus.Pending, Name = "Pendiente" },
                     new { Id = (int)AppointmentStatus.Confirmed, Name = "Confirmado" },
                     new { Id = (int)AppointmentStatus.Waiting, Name = "En Sala de Espera" },

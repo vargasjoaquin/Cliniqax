@@ -60,7 +60,7 @@ namespace CliniqaxSystem.WinFormsUI
 
                 // 2. Cargar Médicos para enlace opcional
                 var professionals = (await _professionalService.GetAllAsync()).ToList();
-                professionals.Insert(0, new ProfessionalDto { Id = 0, FirstName = "[ Ninguno /", LastName = "No es Médico ]" });
+                professionals.Insert(0, new ProfessionalDto { Id = 0, FirstName = "Ninguno/", LastName = "No es Médico" });
                 comboBoxProfessional.DataSource = professionals;
                 comboBoxProfessional.DisplayMember = "FullName";
                 comboBoxProfessional.ValueMember = "Id";

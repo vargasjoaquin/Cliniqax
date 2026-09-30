@@ -63,7 +63,7 @@ namespace CliniqaxSystem.WinFormsUI
             {
                 // Cargar combo de Obras Sociales
                 var insurances = (await _catalogService.GetHealthInsurancesAsync()).ToList();
-                insurances.Insert(0, new HealthInsuranceDto { Id = 0, Name = "[ Particular / Sin Obra Social ]" });
+                insurances.Insert(0, new HealthInsuranceDto { Id = 0, Name = "Particular/Sin Obra Social" });
                 comboBoxHealthInsurance.DataSource = insurances;
                 comboBoxHealthInsurance.DisplayMember = "Name";
                 comboBoxHealthInsurance.ValueMember = "Id";
