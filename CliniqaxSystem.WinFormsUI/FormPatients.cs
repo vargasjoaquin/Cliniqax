@@ -233,7 +233,24 @@ namespace CliniqaxSystem.WinFormsUI
 
             using (new WaitCursorHelper(this))
             {
-                byte[] excelBytes = _excelService.ExportToExcel(_allPatients, "Pacientes");
+                var patientData = _allPatients.Select(p => new
+                {
+                    DNI = p.DocumentNumber,
+                    Nombre = p.FirstName,
+                    Apellido = p.LastName,
+                    NombreCompleto = p.FullName,
+                    FechaNacimiento = p.BirthDate.ToString("dd/MM/yyyy"),
+                    Edad = p.Age,
+                    Telefono = p.Phone,
+                    CorreoElectronico = p.Email ?? "",
+                    Direccion = p.Address ?? "",
+                    Ciudad = p.City ?? "",
+                    ObraSocial = p.HealthInsuranceName ?? "Particular",
+                    NumeroAfiliado = p.AffiliateNumber ?? "",
+                    NotasAdministrativas = p.AdministrativeNotes ?? ""
+                }).ToList();
+
+                byte[] excelBytes = _excelService.ExportToExcel(patientData, "Pacientes");
                 string fileName = $"Pacientes_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
                 _ = FileExportHelper.SaveAndOpenExcelAsync(this, excelBytes, fileName, "Padrón de Pacientes en Excel");
             }
