@@ -31,7 +31,7 @@ namespace CliniqaxSystem.Domain.Entities
 
                 int age = today.Year - BirthDate.Year;
 
-                if (BirthDate.Date > today.AddDays(-age))
+                if (BirthDate.Date > today.AddYears(-age))
                 {
                     age--;
                 }
