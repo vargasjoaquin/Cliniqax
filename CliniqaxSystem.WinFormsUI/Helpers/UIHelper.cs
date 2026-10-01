@@ -160,7 +160,7 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             string[] columnsToHide = {
                 "Id", "IsDeleted", "RowVersion", "IsActive", "Status", "Password", "NewPassword", "CurrentPassword",
                 "RoleId", "SpecialtyId", "ProfessionalId", "PatientId", "HealthInsuranceId",
-                "UserId", "CashSessionId", "AppointmentId", "PaymentMethodId",
+                "UserId", "CashSessionId", "AppointmentId", "PaymentMethodId", "MovementType",
                 "Photo", "Logo", "LogoBytes", "SpecialtyIds", "SpecialtyNames", "Schedules",
                 "Payments", "CashMovements", "Appointments", "ProfessionalSpecialties",
                 "HasClinicalHistory", "HasClinicalEvolution", "ShowLogoOnReceipt", "AutoPrintReceipt",
