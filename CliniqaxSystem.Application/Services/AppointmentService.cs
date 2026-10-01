@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CliniqaxSystem.Application.Common;
 using CliniqaxSystem.Application.DTOs.Appointment;
+using CliniqaxSystem.Application.Interfaces.Common;
 using CliniqaxSystem.Application.Interfaces.Repositories;
 using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.Domain.Entities;
@@ -10,7 +11,7 @@ using FluentValidation;
 namespace CliniqaxSystem.Application.Services
 {
     public class AppointmentService(IUnitOfWork unitOfWork, IMapper mapper, IValidator<AppointmentCreateDto> createAppointmentValidator,
-                                    IValidator<AppointmentRescheduleDto> rescheduleAppointmentValidtor) : IAppointmentService
+                                    IValidator<AppointmentRescheduleDto> rescheduleAppointmentValidtor, IAppEventBus eventBus) : IAppointmentService
     {
         public async Task<AppointmentDto?> GetByIdAsync(int id)
         {
@@ -101,6 +102,9 @@ namespace CliniqaxSystem.Application.Services
 
             bool isSuccess = await unitOfWork.CompleteAsync();
 
+            if (isSuccess)
+                eventBus.Publish(new AppointmentChangedEvent());
+
             return isSuccess
                 ? OperationResult.Ok($"Turno reservado exitosamente para el {appointmentCreateDto.AppointmentDate:dd/MM/yyyy} a las {appointmentCreateDto.StartTime:hh\\:mm}.", appointment.Id)
                 : OperationResult.Failure("Error al persistir el turno.");
@@ -140,6 +144,9 @@ namespace CliniqaxSystem.Application.Services
                 unitOfWork.Appointments.Update(appointment);
 
                 bool isSuccess = await unitOfWork.CompleteAsync();
+
+                if (isSuccess)
+                    eventBus.Publish(new AppointmentChangedEvent());
 
                 // Provisional
 
@@ -183,6 +190,7 @@ namespace CliniqaxSystem.Application.Services
                 return isSuccess
                     ? OperationResult.Ok($"Estado del turno actualizado a '{statusName}'.")
                     : OperationResult.Failure("No se pudo actualizar el estado del turno.");
+
             }
             catch (InvalidOperationException ex)
             {
@@ -204,7 +212,7 @@ namespace CliniqaxSystem.Application.Services
 
             // Valiadamos que el profesional no tenga turnos solapados entre si.
             bool isSlotTaken = await unitOfWork.Appointments.HasOverlappingAppointmentAsync(appointment.ProfessionalId, appointmentRescheduleDto.NewDate.Date, appointmentRescheduleDto.NewStartTime,
-                                                                                            appointmentRescheduleDto.NewEndTime, appointmentRescheduleDto.AppointmentId);
+                                                                              appointmentRescheduleDto.NewEndTime, appointmentRescheduleDto.AppointmentId);
 
             if (isSlotTaken)
                 return OperationResult.Failure("La nueva franja horaria seleccionada ya se encuentra ocupada.");
@@ -216,6 +224,9 @@ namespace CliniqaxSystem.Application.Services
                 unitOfWork.Appointments.Update(appointment);
 
                 bool isSuccess = await unitOfWork.CompleteAsync();
+
+                if (isSuccess)
+                    eventBus.Publish(new AppointmentChangedEvent());
 
                 return isSuccess
                     ? OperationResult.Ok("Turno reprogramado exitosamente.")

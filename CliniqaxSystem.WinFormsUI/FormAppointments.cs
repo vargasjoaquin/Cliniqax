@@ -65,6 +65,24 @@ namespace CliniqaxSystem.WinFormsUI
             this.buttonMarkAttended.Click += async (s, e) => await ExecuteChangeStatusAsync(AppointmentStatus.Attended);
             this.buttonCancel.Click += async (s, e) => await ExecuteCancelAppointmentAsync();
 
+            this.dataGridViewAppointments.CellDoubleClick += async (s, e) =>
+            {
+                if (_selectedAppointment == null)
+                    return;
+
+                if (_selectedAppointment.Status == AppointmentStatus.Attended || _selectedAppointment.Status == AppointmentStatus.Cancelled)
+                {
+                    UIHelper.WarnMessage(this, "Un turno cancelado o ya atendido no puede ser reprogramado.", "Operación no permitida");
+                    return;
+                }
+
+                using var dialog = new FormRescheduleDialog(_appointmentService, _selectedAppointment);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    await LoadAppointmentsAsync();
+                }
+            };
+
             this.dataGridViewAppointments.CellClick += (s, e) => SynchronizeSelectedAppointment();
             this.dataGridViewAppointments.CellFormatting += OnGridCellFormatting;
         }

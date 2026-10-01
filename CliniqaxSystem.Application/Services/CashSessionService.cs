@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CliniqaxSystem.Application.Common;
 using CliniqaxSystem.Application.DTOs.Cash;
+using CliniqaxSystem.Application.Interfaces.Common;
 using CliniqaxSystem.Application.Interfaces.Repositories;
 using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.Domain.Constants;
@@ -13,7 +14,7 @@ namespace CliniqaxSystem.Application.Services
     public class CashSessionService(IUnitOfWork unitOfWork, ICurrentUserService currentUser, IMapper mapper, IValidator<CashSessionOpenDto> cashSessionOpenValidator,
                                     IValidator<CashSessionCloseDto> cashSessionCloseValidator,
                                     IValidator<CashMovementCreateDto> cashMovementValidator,
-                                    IValidator<ConsultationPaymentCreateDto> consultationPaymentValidator) : ICashSessionService
+                                    IValidator<ConsultationPaymentCreateDto> consultationPaymentValidator, IAppEventBus eventBus) : ICashSessionService
     {
         public async Task<CashSessionDto?> GetActiveSessionAsync()
         {
@@ -69,6 +70,9 @@ namespace CliniqaxSystem.Application.Services
 
             bool isSuccess = await unitOfWork.CompleteAsync();
 
+            if (isSuccess)
+                eventBus.Publish(new CashSessionChangedEvent());
+
             return isSuccess
                 ? OperationResult.Ok($"Sesión de caja abierta exitosamente con fondo inicial de {cashSessionOpenDto.InitialCash:C2}.", cashSession.Id)
                 : OperationResult.Failure("Error al registrar la apertura de caja.");
@@ -117,6 +121,9 @@ namespace CliniqaxSystem.Application.Services
             unitOfWork.CashSessions.Update(cashSession);
             
             bool isSuccess = await unitOfWork.CompleteAsync();
+
+            if (isSuccess)
+                eventBus.Publish(new CashSessionChangedEvent());
 
             string cashBalance = cashSession.Difference == 0
                 ? "Caja Cuadrada ($ 0.00)"
@@ -215,6 +222,9 @@ namespace CliniqaxSystem.Application.Services
 
                 await unitOfWork.CompleteAsync();
                 await unitOfWork.CommitAsync();
+
+                eventBus.Publish(new CashSessionChangedEvent());
+                eventBus.Publish(new AppointmentChangedEvent());
 
                 return OperationResult.Ok($"El Cobro se ha registrado con éxito. Comprobante: {payment.ReceiptNumber}.", payment.Id);
             }
