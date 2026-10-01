@@ -50,7 +50,7 @@
             picIconConfirmClose.Image = Icons.caja_arqueo_cierre_z;
             picIconConfirmClose.Location = new Point(310, 225);
             picIconConfirmClose.Name = "picIconConfirmClose";
-            picIconConfirmClose.Size = new Size(24, 24);
+            picIconConfirmClose.Size = new Size(43, 40);
             picIconConfirmClose.SizeMode = PictureBoxSizeMode.Zoom;
             picIconConfirmClose.TabIndex = 99;
             picIconConfirmClose.TabStop = false;
@@ -60,9 +60,9 @@
             picIconCancel.BackColor = Color.White;
             picIconCancel.Cursor = Cursors.Hand;
             picIconCancel.Image = Icons.action_cancelar_volver;
-            picIconCancel.Location = new Point(155, 225);
+            picIconCancel.Location = new Point(159, 225);
             picIconCancel.Name = "picIconCancel";
-            picIconCancel.Size = new Size(24, 24);
+            picIconCancel.Size = new Size(35, 40);
             picIconCancel.SizeMode = PictureBoxSizeMode.Zoom;
             picIconCancel.TabIndex = 99;
             picIconCancel.TabStop = false;
@@ -74,7 +74,7 @@
             labelHeaderTitle.ForeColor = Color.FromArgb(15, 23, 42);
             labelHeaderTitle.Location = new Point(20, 15);
             labelHeaderTitle.Name = "labelHeaderTitle";
-            labelHeaderTitle.Size = new Size(300, 28);
+            labelHeaderTitle.Size = new Size(286, 28);
             labelHeaderTitle.TabIndex = 0;
             labelHeaderTitle.Text = "ARQUEO CIEGO DE EFECTIVO";
             // 
