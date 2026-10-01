@@ -48,6 +48,9 @@ namespace CliniqaxSystem.Application.Validations.Professional
             RuleFor(x => x.Observations)
                 .MaximumLength(500).WithMessage("Las observaciones no pueden superar los 500 caracteres.");
 
+            RuleFor(x => x.Schedules)
+                .NotEmpty().WithMessage("Debe configurar al menos un horario de atención semanal.");
+
             RuleForEach(x => x.Schedules)
                 .SetValidator(new ProfessionalScheduleValidator());
         }
