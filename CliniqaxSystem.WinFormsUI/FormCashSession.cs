@@ -143,7 +143,8 @@ namespace CliniqaxSystem.WinFormsUI
                     var result = await _cashSessionService.ProcessPaymentAsync(dto);
                     if (result.Success)
                     {
-                        // Preguntar si desea imprimir el comprobante térmico para el paciente
+                        UIHelper.InfoMessage(this, result.Message, "Cobro Registrado");
+
                         if (UIHelper.ConfirmMessage("¿Desea imprimir el recibo de atención para el paciente?", "Recibo Emitido"))
                         {
                             try
