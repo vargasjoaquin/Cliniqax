@@ -1,4 +1,5 @@
 ﻿using CliniqaxSystem.Application.Configuration;
+using CliniqaxSystem.Application.Interfaces.Common;
 using CliniqaxSystem.Application.Interfaces.Repositories;
 using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.Infrastructure.Persistence;
@@ -39,6 +40,7 @@ namespace CliniqaxSystem.Infrastructure
             services.AddScoped<IBackupService, BackupService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddSingleton<ITicketPrinterService, TicketPrinterService>();
+            services.AddSingleton<IAppEventBus, AppEventBusService>();
 
             return services;
         }

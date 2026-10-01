@@ -1,4 +1,5 @@
-﻿using CliniqaxSystem.Application.Interfaces.Services;
+﻿using CliniqaxSystem.Application.Interfaces.Common;
+using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.WinFormsUI.Helpers;
 
 namespace CliniqaxSystem.WinFormsUI
@@ -8,7 +9,7 @@ namespace CliniqaxSystem.WinFormsUI
         private readonly IReportService _reportService;
         private readonly SemaphoreSlim _dashboardLock = new(1, 1);
 
-        public FormHome(IReportService reportService)
+        public FormHome(IReportService reportService, IAppEventBus eventBus)
         {
             _reportService = reportService;
             InitializeComponent();
@@ -16,6 +17,18 @@ namespace CliniqaxSystem.WinFormsUI
             UIThemeHelper.ApplyFormStyle(this);
 
             this.Load += async (s, e) => await RefreshDashboardMetricsAndTablesAsync();
+
+            eventBus.Subscribe<AppointmentChangedEvent>(_ =>
+            {
+                if (this.IsHandleCreated && !this.IsDisposed)
+                    this.BeginInvoke(async () => await RefreshDashboardMetricsAndTablesAsync());
+            });
+
+            eventBus.Subscribe<CashSessionChangedEvent>(_ =>
+            {
+                if (this.IsHandleCreated && !this.IsDisposed)
+                    this.BeginInvoke(async () => await RefreshDashboardMetricsAndTablesAsync());
+            });
         }
 
         public async Task RefreshDashboardMetricsAndTablesAsync()
