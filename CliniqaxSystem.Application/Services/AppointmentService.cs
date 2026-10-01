@@ -141,8 +141,47 @@ namespace CliniqaxSystem.Application.Services
 
                 bool isSuccess = await unitOfWork.CompleteAsync();
 
+                // Provisional
+
+                string statusName;
+
+                switch (newStatus)
+                {
+                    case AppointmentStatus.Pending:
+                        statusName = "Pendiente";
+                        break;
+
+                    case AppointmentStatus.Confirmed:
+                        statusName = "Confirmado";
+                        break;
+
+                    case AppointmentStatus.Waiting:
+                        statusName = "En Espera";
+                        break;
+
+                    case AppointmentStatus.Attended:
+                        statusName = "Atendido";
+                        break;
+
+                    case AppointmentStatus.Cancelled:
+                        statusName = "Cancelado";
+                        break;
+
+                    case AppointmentStatus.Absent:
+                        statusName = "Ausente";
+                        break;
+
+                    case AppointmentStatus.Rescheduled:
+                        statusName = "Reprogramado";
+                        break;
+
+                    default:
+                        statusName = newStatus.ToString();
+                        break;
+                }
+
                 return isSuccess
-                    ? OperationResult.Ok($"Estado del turno actualizado a '{newStatus}'.")
+                    ? OperationResult.Ok($"Estado del turno actualizado a '{statusName}'.")
                     : OperationResult.Failure("No se pudo actualizar el estado del turno.");
             }
             catch (InvalidOperationException ex)
