@@ -37,8 +37,8 @@
             textBoxPassword = new TextBox();
             labelErrorMessage = new Label();
             buttonLogin = new Button();
-            buttonClose = new Button();
             linkLabelForgotPassword = new LinkLabel();
+            buttonClose = new Button();
             ((System.ComponentModel.ISupportInitialize)picIconLogin).BeginInit();
             panelLoginCard.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxLogo).BeginInit();
@@ -49,9 +49,9 @@
             picIconLogin.BackColor = Color.FromArgb(2, 132, 199);
             picIconLogin.Cursor = Cursors.Hand;
             picIconLogin.Image = Icons.status_atendido;
-            picIconLogin.Location = new Point(66, 325);
+            picIconLogin.Location = new Point(99, 409);
             picIconLogin.Name = "picIconLogin";
-            picIconLogin.Size = new Size(42, 50);
+            picIconLogin.Size = new Size(48, 66);
             picIconLogin.SizeMode = PictureBoxSizeMode.Zoom;
             picIconLogin.TabIndex = 99;
             picIconLogin.TabStop = false;
@@ -67,17 +67,18 @@
             panelLoginCard.Controls.Add(labelErrorMessage);
             panelLoginCard.Controls.Add(picIconLogin);
             panelLoginCard.Controls.Add(buttonLogin);
+            panelLoginCard.Controls.Add(linkLabelForgotPassword);
             panelLoginCard.Location = new Point(35, 45);
             panelLoginCard.Name = "panelLoginCard";
-            panelLoginCard.Size = new Size(390, 440);
+            panelLoginCard.Size = new Size(480, 575);
             panelLoginCard.TabIndex = 0;
             // 
             // pictureBoxLogo
             // 
             pictureBoxLogo.Image = Icons.logo_cliniqax;
-            pictureBoxLogo.Location = new Point(30, 20);
+            pictureBoxLogo.Location = new Point(40, 22);
             pictureBoxLogo.Name = "pictureBoxLogo";
-            pictureBoxLogo.Size = new Size(330, 85);
+            pictureBoxLogo.Size = new Size(390, 122);
             pictureBoxLogo.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxLogo.TabIndex = 0;
             pictureBoxLogo.TabStop = false;
@@ -87,7 +88,7 @@
             labelUsername.AutoSize = true;
             labelUsername.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
             labelUsername.ForeColor = Color.FromArgb(15, 23, 42);
-            labelUsername.Location = new Point(30, 130);
+            labelUsername.Location = new Point(63, 180);
             labelUsername.Name = "labelUsername";
             labelUsername.Size = new Size(73, 21);
             labelUsername.TabIndex = 1;
@@ -97,9 +98,9 @@
             // 
             textBoxUsername.BorderStyle = BorderStyle.FixedSingle;
             textBoxUsername.Font = new Font("Segoe UI", 11F);
-            textBoxUsername.Location = new Point(30, 155);
+            textBoxUsername.Location = new Point(63, 205);
             textBoxUsername.Name = "textBoxUsername";
-            textBoxUsername.Size = new Size(330, 32);
+            textBoxUsername.Size = new Size(341, 32);
             textBoxUsername.TabIndex = 2;
             // 
             // labelPassword
@@ -107,7 +108,7 @@
             labelPassword.AutoSize = true;
             labelPassword.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
             labelPassword.ForeColor = Color.FromArgb(15, 23, 42);
-            labelPassword.Location = new Point(30, 205);
+            labelPassword.Location = new Point(63, 255);
             labelPassword.Name = "labelPassword";
             labelPassword.Size = new Size(100, 21);
             labelPassword.TabIndex = 3;
@@ -117,19 +118,19 @@
             // 
             textBoxPassword.BorderStyle = BorderStyle.FixedSingle;
             textBoxPassword.Font = new Font("Segoe UI", 11F);
-            textBoxPassword.Location = new Point(30, 230);
+            textBoxPassword.Location = new Point(63, 280);
             textBoxPassword.Name = "textBoxPassword";
             textBoxPassword.PasswordChar = '●';
-            textBoxPassword.Size = new Size(330, 32);
+            textBoxPassword.Size = new Size(341, 32);
             textBoxPassword.TabIndex = 4;
             // 
             // labelErrorMessage
             // 
             labelErrorMessage.Font = new Font("Segoe UI", 8.5F);
             labelErrorMessage.ForeColor = Color.FromArgb(239, 68, 68);
-            labelErrorMessage.Location = new Point(30, 275);
+            labelErrorMessage.Location = new Point(40, 338);
             labelErrorMessage.Name = "labelErrorMessage";
-            labelErrorMessage.Size = new Size(330, 38);
+            labelErrorMessage.Size = new Size(401, 38);
             labelErrorMessage.TabIndex = 5;
             labelErrorMessage.TextAlign = ContentAlignment.MiddleCenter;
             labelErrorMessage.Visible = false;
@@ -142,13 +143,25 @@
             buttonLogin.FlatStyle = FlatStyle.Flat;
             buttonLogin.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             buttonLogin.ForeColor = Color.White;
-            buttonLogin.Location = new Point(30, 325);
+            buttonLogin.Location = new Point(63, 409);
             buttonLogin.Name = "buttonLogin";
             buttonLogin.Padding = new Padding(30, 0, 0, 0);
-            buttonLogin.Size = new Size(330, 50);
+            buttonLogin.Size = new Size(341, 66);
             buttonLogin.TabIndex = 6;
             buttonLogin.Text = "INGRESAR AL SISTEMA";
             buttonLogin.UseVisualStyleBackColor = false;
+            // 
+            // linkLabelForgotPassword
+            // 
+            linkLabelForgotPassword.Font = new Font("Segoe UI", 9F);
+            linkLabelForgotPassword.LinkColor = Color.FromArgb(2, 132, 199);
+            linkLabelForgotPassword.Location = new Point(52, 493);
+            linkLabelForgotPassword.Name = "linkLabelForgotPassword";
+            linkLabelForgotPassword.Size = new Size(367, 54);
+            linkLabelForgotPassword.TabIndex = 8;
+            linkLabelForgotPassword.TabStop = true;
+            linkLabelForgotPassword.Text = "¿Olvidó su contraseña?";
+            linkLabelForgotPassword.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // buttonClose
             // 
@@ -157,34 +170,21 @@
             buttonClose.FlatStyle = FlatStyle.Flat;
             buttonClose.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             buttonClose.ForeColor = Color.White;
-            buttonClose.Location = new Point(415, 8);
+            buttonClose.Location = new Point(521, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new Size(36, 32);
             buttonClose.TabIndex = 1;
             buttonClose.Text = "✕";
             buttonClose.UseVisualStyleBackColor = true;
             // 
-            // linkLabelForgotPassword
-            // 
-            linkLabelForgotPassword.Font = new Font("Segoe UI", 9F);
-            linkLabelForgotPassword.LinkColor = Color.FromArgb(2, 132, 199);
-            linkLabelForgotPassword.Location = new Point(30, 390);
-            linkLabelForgotPassword.Name = "linkLabelForgotPassword";
-            linkLabelForgotPassword.Size = new Size(330, 24);
-            linkLabelForgotPassword.TabIndex = 8;
-            linkLabelForgotPassword.TabStop = true;
-            linkLabelForgotPassword.Text = "¿Olvidó su contraseña?";
-            linkLabelForgotPassword.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // FormLogin
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(15, 23, 42);
-            ClientSize = new Size(460, 520);
+            ClientSize = new Size(560, 648);
             Controls.Add(buttonClose);
             Controls.Add(panelLoginCard);
-            panelLoginCard.Controls.Add(linkLabelForgotPassword);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FormLogin";
             StartPosition = FormStartPosition.CenterScreen;
