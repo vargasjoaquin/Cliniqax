@@ -8,7 +8,7 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         Task<MedicalRecord?> GetByRecordNumberAsync(string recordNumber);
         Task<MedicalRecord?> GetByIdAsync(int id);
         Task AddAsync(MedicalRecord medicalRecord);
-        Task Update(MedicalRecord medicalRecord);
+        void Update(MedicalRecord medicalRecord);
         Task<bool> ExistsForPatientAsync(int patientId);
     }
 }
