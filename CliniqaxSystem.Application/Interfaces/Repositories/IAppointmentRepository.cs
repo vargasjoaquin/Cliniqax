@@ -1,0 +1,15 @@
+﻿using CliniqaxSystem.Domain.Entities;
+
+namespace CliniqaxSystem.Application.Interfaces.Repositories
+{
+    public interface IAppointmentRepository
+    {
+        Task<Appointment?> GetByIdAsync(int id);
+        Task AddAsync(Appointment appointment);
+        void Update(Appointment appointment);
+        Task<IEnumerable<Appointment>> GetByDateAndProfessionalAsync(DateTime date, int professionalId);
+        Task<IEnumerable<Appointment>> GetByDateRangeAsync(DateTime startDate, DateTime endDate, int? professionalId = null, int? specialtyId = null);
+        Task<IEnumerable<Appointment>> GetHistoryByPatientIdAsync(int patientId);
+        Task<bool> HasOverlappingAppointmentAsync(int professionalId, DateTime date, TimeSpan start, TimeSpan end, int? excludeAppointmentId = null);
+    }
+}
