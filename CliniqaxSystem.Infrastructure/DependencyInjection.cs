@@ -29,6 +29,7 @@ namespace CliniqaxSystem.Infrastructure
             // 2. Opciones de configuración
             services.Configure<DatabaseBackupSettings>(configuration.GetSection("DatabaseBackup"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            services.Configure<ClinicalStorageSettings>(configuration.GetSection("ClinicalStorage"));
 
             // 3. Repositorios y Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -41,6 +42,7 @@ namespace CliniqaxSystem.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddSingleton<ITicketPrinterService, TicketPrinterService>();
             services.AddSingleton<IAppEventBus, AppEventBusService>();
+            services.AddSingleton<IClinicalStorageService, ClinicalStorageService>();
 
             return services;
         }
