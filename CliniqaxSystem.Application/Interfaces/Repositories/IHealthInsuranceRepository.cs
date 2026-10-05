@@ -1,0 +1,14 @@
+﻿using CliniqaxSystem.Domain.Entities;
+
+namespace CliniqaxSystem.Application.Interfaces.Repositories
+{
+    public interface IHealthInsuranceRepository
+    {
+        Task<IEnumerable<HealthInsurance>> GetAllAsync();
+        Task<HealthInsurance?> GetByIdAsync(int id);
+        Task AddAsync(HealthInsurance insurance);
+        void Update(HealthInsurance insurance);
+        Task<HealthInsurance?> GetDeletedByIdAsync(int id);
+        Task<IEnumerable<HealthInsurance>> GetAllDeletedAsync();
+    }
+}
