@@ -12,7 +12,7 @@ namespace CliniqaxSystem.Domain.Entities
         public virtual DiagnosisType DiagnosisType { get; set; } = null!;
 
         public string Description { get; set; } = null!;
-        public string? DiagnosisCode { get; set; }
+        public string? DiagnosticCode { get; set; }
         public string? Notes { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

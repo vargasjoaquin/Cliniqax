@@ -14,7 +14,7 @@ namespace CliniqaxSystem.Domain.Entities
         public virtual AttachmentCategory? AttachmentCategory { get; set; }
 
         public string OriginalFileName { get; set; } = null!;
-        public string StorageFileName { get; set; } = null!;
+        public string StoredFileName { get; set; } = null!;
         public string RelativePath { get; set; } = null!;
         public string FileExtension { get; set; } = null!;
         public string ContentType { get; set; } = null!;

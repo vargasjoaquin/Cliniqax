@@ -7,7 +7,7 @@ namespace CliniqaxSystem.Domain.Entities
         public int ConsultationId { get; set; }
         public virtual Consultation Consultation { get; set; } = null!;
 
-        public string Instruction { get; set; } = null!;
+        public string Instructions { get; set; } = null!;
         public string? MedicationDetails { get; set; }
         public string? FollowUpNotes { get; set; }
 
