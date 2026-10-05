@@ -2,7 +2,7 @@
 
 namespace CliniqaxSystem.Domain.Entities
 {
-    public class MedicalAttachment : BaseEntity
+    public class MedicalAttachment : AuditableEntity
     {
         public int MedicalRecordId { get; set; }
         public virtual MedicalRecord MedicalRecord { get; set; } = null!;
