@@ -1,6 +1,7 @@
 ﻿using CliniqaxSystem.Application.Common;
 using CliniqaxSystem.Application.Configuration;
 using CliniqaxSystem.Application.DTOs.Clinical;
+using CliniqaxSystem.Application.DTOs.Clinical.File;
 using CliniqaxSystem.Application.Interfaces.Services;
 using Microsoft.Extensions.Options;
 

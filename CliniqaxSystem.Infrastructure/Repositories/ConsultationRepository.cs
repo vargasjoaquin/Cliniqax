@@ -71,6 +71,14 @@ namespace CliniqaxSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<MedicalAttachment?> GetAttachmentByIdAsync(int attachmentId)
+        {
+            return await context.MedicalAttachments
+                .Include(a => a.AttachmentCategory)
+                .FirstOrDefaultAsync(a => a.Id == attachmentId);
+        }
+
+
         public async Task AddMedicalAttachmentAsync(MedicalAttachment attachment)
         {
             await context.MedicalAttachments.AddAsync(attachment);
