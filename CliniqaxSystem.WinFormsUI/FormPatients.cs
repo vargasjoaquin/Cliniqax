@@ -1,7 +1,9 @@
 ﻿using CliniqaxSystem.Application.DTOs.Catalog;
 using CliniqaxSystem.Application.DTOs.Patient;
+using CliniqaxSystem.Application.Interfaces.Common;
 using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.WinFormsUI.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
 namespace CliniqaxSystem.WinFormsUI
@@ -12,22 +14,23 @@ namespace CliniqaxSystem.WinFormsUI
         private readonly ICatalogService _catalogService;
         private readonly IDocumentService _documentService;
         private readonly IExcelService _excelService;
+        private readonly IServiceProvider _serviceProvider;
 
         private int _selectedPatientId = 0;
         private List<PatientDto> _allPatients = new();
 
-        public FormPatients(IPatientService patientService, ICatalogService catalogService, IDocumentService documentService, IExcelService excelService)
+        public FormPatients(IPatientService patientService, ICatalogService catalogService, IDocumentService documentService, IExcelService excelService, IServiceProvider serviceProvider)
         {
             _patientService = patientService;
             _catalogService = catalogService;
             _documentService = documentService;
             _excelService = excelService;
+            _serviceProvider = serviceProvider;
 
             InitializeComponent();
             UIThemeHelper.ApplyFormStyle(this);
             UIThemeHelper.ApplyCardStyle(panelPatientForm);
 
-            // 1. Vinculación de Iconos Superpuestos (Patrón Compriax)
             ButtonIconOverlayHelper.BindEvents(this.buttonSave, this.picIconSave);
             ButtonIconOverlayHelper.BindEvents(this.buttonEdit, this.picIconEdit);
             ButtonIconOverlayHelper.BindEvents(this.buttonDelete, this.picIconDelete);
@@ -35,18 +38,15 @@ namespace CliniqaxSystem.WinFormsUI
             ButtonIconOverlayHelper.BindEvents(this.buttonExportPdf, this.picIconExportPdf);
             ButtonIconOverlayHelper.BindEvents(this.buttonExportExcel, this.picIconExportExcel);
 
-            // 2. Máscaras y validaciones de entrada en tiempo real
             textBoxDocumentNumber.MaxLength = 8;
             textBoxDocumentNumber.KeyPress += (s, e) =>
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                    e.Handled = true; // Solo números en DNI
+                    e.Handled = true;
             };
 
-            // 3. Resaltado de filas en la grilla
             this.dataGridViewPatients.CellFormatting += (s, e) => DataGridViewHelper.ColorRowsByStatus(dataGridViewPatients, e);
 
-            // 4. Eventos de controles
             this.Load += async (s, e) => await InitializeFormAsync();
             this.buttonSave.Click += async (s, e) => await ExecuteSavePatientAsync();
             this.buttonEdit.Click += async (s, e) => await ExecuteUpdatePatientAsync();
@@ -55,13 +55,26 @@ namespace CliniqaxSystem.WinFormsUI
             this.buttonExportPdf.Click += async (s, e) => await ExecuteExportPdfAsync();
             this.buttonExportExcel.Click += (s, e) => ExecuteExportExcel();
             this.textBoxSearch.TextChanged += (s, e) => FilterPatientsList();
+
+            this.dataGridViewPatients.CellDoubleClick += (s, e) =>
+            {
+                if (_selectedPatientId > 0)
+                {
+                    var medicalRecordForm = new FormMedicalRecord(
+                        _serviceProvider.GetRequiredService<IClinicalService>(),
+                        _patientService,
+                        _serviceProvider.GetRequiredService<IAppEventBus>(),
+                        _serviceProvider,
+                        _selectedPatientId);
+                    medicalRecordForm.Show();
+                }
+            };
         }
 
         private async Task InitializeFormAsync()
         {
             using (new WaitCursorHelper(this))
             {
-                // Cargar combo de Obras Sociales
                 var insurances = (await _catalogService.GetHealthInsurancesAsync()).ToList();
                 insurances.Insert(0, new HealthInsuranceDto { Id = 0, Name = "Particular/Sin Obra Social" });
                 comboBoxHealthInsurance.DataSource = insurances;
@@ -70,8 +83,6 @@ namespace CliniqaxSystem.WinFormsUI
                 comboBoxHealthInsurance.SelectedIndex = 0;
 
                 await RefreshPatientsGridAsync();
-
-                // Selección administrada segura
                 UIHelper.AttachManagedSelection(this, dataGridViewPatients, SynchronizeSelectedPatientToFields, ResetInputFields);
             }
         }
@@ -121,8 +132,7 @@ namespace CliniqaxSystem.WinFormsUI
             comboBoxHealthInsurance.SelectedValue = patient.HealthInsuranceId ?? 0;
             textBoxAffiliateNumber.Text = patient.AffiliateNumber ?? string.Empty;
             textBoxAdministrativeNotes.Text = patient.AdministrativeNotes ?? string.Empty;
-
-            // INMUTABILIDAD DEL DNI: Se bloquea y cambia de color en modo edición
+        
             textBoxDocumentNumber.ReadOnly = true;
             textBoxDocumentNumber.BackColor = Color.FromArgb(241, 245, 249);
 
@@ -137,7 +147,6 @@ namespace CliniqaxSystem.WinFormsUI
             comboBoxHealthInsurance.SelectedValue = 0;
             dateTimePickerBirthDate.Value = DateTime.Today.AddYears(-20);
 
-            // Desbloquear DNI para nuevo ingreso
             textBoxDocumentNumber.ReadOnly = false;
             textBoxDocumentNumber.BackColor = Color.White;
 
