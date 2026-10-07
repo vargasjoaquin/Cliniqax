@@ -3,6 +3,7 @@
     public record AppointmentChangedEvent;
     public record CashSessionChangedEvent;
     public record PatientChangedEvent;
+    public record ClinicalRecordChangedEvent(int? PatientId = null);
 
     public interface IAppEventBus
     {

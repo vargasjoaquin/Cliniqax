@@ -10,6 +10,7 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         Task AddAsync(Consultation consultation);
         void Update(Consultation consultation);
         Task<IEnumerable<MedicalAttachment>> GetMedicalAttachmentsByRecordIdAsync(int medicalRecordId);
+        Task<MedicalAttachment?> GetAttachmentByIdAsync(int attachmentId);
         Task AddMedicalAttachmentAsync(MedicalAttachment medicalAttachment);
         void UpdateMedicalAttachment(MedicalAttachment medicalAttachment);
     }
