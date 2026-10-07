@@ -77,7 +77,8 @@ namespace CliniqaxSystem.WinFormsUI
 
             this.dataGridViewAgenda.CellDoubleClick += (s, e) =>
             {
-                if (_selectedSlot?.Appointment == null) return;
+                if (_selectedSlot?.Appointment == null) 
+                    return;
 
                 var app = _selectedSlot.Appointment;
                 var consultationEntryForm = new FormConsultationEntry(
