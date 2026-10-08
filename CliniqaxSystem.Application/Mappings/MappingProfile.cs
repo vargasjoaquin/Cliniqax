@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CliniqaxSystem.Application.DTOs.AdminAndDashboard;
 using CliniqaxSystem.Application.DTOs.Appointment;
+using CliniqaxSystem.Application.DTOs.Audit;
 using CliniqaxSystem.Application.DTOs.Cash;
 using CliniqaxSystem.Application.DTOs.Catalog;
 using CliniqaxSystem.Application.DTOs.Clinical.Attachment;
@@ -10,6 +11,7 @@ using CliniqaxSystem.Application.DTOs.Clinical.Evolution;
 using CliniqaxSystem.Application.DTOs.Clinical.MedicalAttachment;
 using CliniqaxSystem.Application.DTOs.Clinical.MedicalInstruction;
 using CliniqaxSystem.Application.DTOs.Clinical.MedicalRecord;
+using CliniqaxSystem.Application.DTOs.Notification;
 using CliniqaxSystem.Application.DTOs.Patient;
 using CliniqaxSystem.Application.DTOs.Professional;
 using CliniqaxSystem.Application.DTOs.User;
@@ -255,6 +257,24 @@ namespace CliniqaxSystem.Application.Mappings
             CreateMap<MedicalInstruction, MedicalInstructionDto>();
             CreateMap<MedicalAttachment, MedicalAttachmentDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.AttachmentCategory != null ? src.AttachmentCategory.Name : "Sin Categoría"));
+
+            // ==========================================
+            // 9. NOTIFICACIONES, REGLAS Y AUDITORÍA
+            // ==========================================
+            CreateMap<Notification, NotificationDto>()
+                .ForMember(dest => dest.ChannelName, opt => opt.MapFrom(src => src.Channel.Name))
+                .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status.Name))
+                .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient != null ? src.Patient.FullName : string.Empty));
+
+            CreateMap<NotificationTemplate, NotificationTemplateDto>()
+                .ForMember(dest => dest.ChannelName, opt => opt.MapFrom(src => src.Channel.Name));
+
+            CreateMap<ReminderRuleConfig, ReminderRuleConfigDto>()
+                .ForMember(dest => dest.ChannelName, opt => opt.MapFrom(src => src.Channel.Name))
+                .ForMember(dest => dest.TemplateName, opt => opt.MapFrom(src => src.Template.Name));
+
+            CreateMap<AuditLog, AuditLogDto>();
+            CreateMap<BackupExecutionLog, BackupExecutionLogDto>();
         }
     }
 }
