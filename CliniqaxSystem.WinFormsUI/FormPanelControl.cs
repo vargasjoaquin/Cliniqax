@@ -35,7 +35,6 @@ namespace CliniqaxSystem.WinFormsUI
 
             this.buttonLogout.Click += (s, e) => this.Close();
             this.FormClosing += OnFormClosingConfirmation;
-            this.Load += (s, e) => InitializeNavigationAndSession();
 
             this.Load += async (s, e) =>
             {
@@ -50,74 +49,96 @@ namespace CliniqaxSystem.WinFormsUI
             labelRoleName.Text = $"[{_currentUserService.RoleName?.ToUpper()}]";
 
             bool isAdministrator = _currentUserService.RoleName?.Equals(RoleConstants.ADMINISTRATOR, StringComparison.OrdinalIgnoreCase) ?? true;
+            bool isDoctor = _currentUserService.RoleName?.Equals(RoleConstants.PROFESSIONAL, StringComparison.OrdinalIgnoreCase) ?? false;
+            bool canAccessClinical = isAdministrator || isDoctor;
 
-            BuildNavigationRibbon(isAdministrator);
+            BuildNavigationRibbon(isAdministrator, canAccessClinical);
         }
 
-        private void BuildNavigationRibbon(bool isAdministrator)
+        private void BuildNavigationRibbon(bool isAdministrator, bool canAccessClinical)
         {
             flowLayoutPanelMenu.SuspendLayout();
             flowLayoutPanelMenu.Controls.Clear();
 
-            var menuItems = new List<NavMenuItemHelper>
+            string currentRole = _currentUserService.RoleName ?? string.Empty;
+            bool isDoctor = currentRole.Equals(RoleConstants.PROFESSIONAL, StringComparison.OrdinalIgnoreCase);
+            bool isReceptionist = currentRole.Equals(RoleConstants.RECEPTIONIST, StringComparison.OrdinalIgnoreCase);
+
+            var menuItems = new List<NavMenuItemHelper>();
+
+            menuItems.Add(NavMenuItemHelper.DirectAction("Inicio", "Dashboard", Icons.nav_dashboard, async () =>
             {
-                NavMenuItemHelper.DirectAction("Inicio", "Dashboard", Icons.nav_dashboard, async () =>
+                if (_dashboardForm != null)
                 {
-                    if (_dashboardForm != null)
-                    {
-                        _dashboardForm.BringToFront();
-                        await _dashboardForm.RefreshDashboardMetricsAndTablesAsync();
-                    }
-                }),
+                    _dashboardForm.BringToFront();
+                    await _dashboardForm.RefreshDashboardMetricsAndTablesAsync();
+                }
+            }));
 
-                NavMenuItemHelper.Group("Agenda ▾", "Turnos y Calendario", Icons.nav_agenda_medica, new List<NavMenuItemHelper>
+            menuItems.Add(NavMenuItemHelper.Group("Agenda ▾", "Turnos y Calendario", Icons.nav_agenda_medica, new List<NavMenuItemHelper>
+            {
+                NavMenuItemHelper.Direct("Agenda Médica", "Grilla Visual de Turnos", Icons.nav_agenda_medica, typeof(FormAgenda)),
+                NavMenuItemHelper.Direct("Gestión de Turnos", "Listado y Búsqueda de Citas", Icons.nav_gestion_turnos, typeof(FormAppointments))
+            }));
+
+            menuItems.Add(NavMenuItemHelper.Direct("Pacientes", "Padrón de Pacientes", Icons.nav_pacientes, typeof(FormPatients)));
+
+            if (isAdministrator || isDoctor)
+            {
+                menuItems.Add(NavMenuItemHelper.Direct("Historia Clínica", "Expedientes y Atenciones", Icons.status_atendido, typeof(FormMedicalRecord)));
+            }
+
+            if (isAdministrator)
+            {
+                menuItems.Add(NavMenuItemHelper.Direct("Profesionales", "Médicos y Matrículas", Icons.nav_profesionales, typeof(FormProfessionals)));
+            }
+
+            if (isAdministrator || isReceptionist)
+            {
+                menuItems.Add(NavMenuItemHelper.Direct("Caja Diaria", "Sesión Diaria y Cobros", Icons.nav_caja_finanzas, typeof(FormCashSession)));
+            }
+
+            if (isAdministrator)
+            {
+                menuItems.Add(NavMenuItemHelper.Group("Catálogos ▾", "Maestros del Sistema", Icons.nav_especialidades, new List<NavMenuItemHelper>
                 {
-                    NavMenuItemHelper.Direct("Agenda Médica", "Grilla Visual de Turnos", Icons.nav_agenda_medica, typeof(FormAgenda)),
-                    NavMenuItemHelper.Direct("Gestión de Turnos", "Listado y Búsqueda de Citas", Icons.nav_gestion_turnos, typeof(FormAppointments))
-                }),
+                    NavMenuItemHelper.Direct("Especialidades", "Ramas Médicas", Icons.nav_especialidades, typeof(FormSpecialties)),
+                    NavMenuItemHelper.Direct("Obras Sociales", "Prepagas y Mutuales", Icons.nav_obras_sociales, typeof(FormHealthInsurances))
+                }));
+            }
 
-                NavMenuItemHelper.Direct("Pacientes", "Padrón de Pacientes", Icons.nav_pacientes, typeof(FormPatients)),
-
-                NavMenuItemHelper.Direct("Profesionales", "Médicos y Matrículas", Icons.nav_profesionales, typeof(FormProfessionals), requireAdmin: true),
-
-                NavMenuItemHelper.Direct("Caja Diaria", "Sesión Diaria y Cobros", Icons.nav_caja_finanzas, typeof(FormCashSession)),
-
-                NavMenuItemHelper.Group("Catálogos ▾", "Maestros del Sistema", Icons.nav_especialidades, new List<NavMenuItemHelper>
-                {
-                    NavMenuItemHelper.Direct("Especialidades", "Ramas Médicas", Icons.nav_especialidades, typeof(FormSpecialties), requireAdmin: true),
-                    NavMenuItemHelper.Direct("Obras Sociales", "Prepagas y Mutuales", Icons.nav_obras_sociales, typeof(FormHealthInsurances), requireAdmin: true)
-                }),
-
-                NavMenuItemHelper.Group("Reportes ▾", "Informes Administrativos", Icons.nav_reportes_estadisticas, new List<NavMenuItemHelper>
-                {
-                    NavMenuItemHelper.Direct("Reporte de Turnos", "Estadísticas de Citas", Icons.nav_gestion_turnos, typeof(FormAppointmentsReport)),
-                    NavMenuItemHelper.Direct("Reporte de Ingresos", "Recaudación de Consultas", Icons.nav_caja_finanzas, typeof(FormIncomeReport), requireAdmin: true)
-                }),
-
-                NavMenuItemHelper.Group("Ajustes ▾", "Configuración y Seguridad", Icons.nav_configuracion_consultorio, new List<NavMenuItemHelper>
-                {
-                    NavMenuItemHelper.Direct("Usuarios del Sistema", "Cuentas de Acceso", Icons.nav_usuarios_sistema, typeof(FormUsers), requireAdmin: true),
-                    NavMenuItemHelper.Direct("Papelera y Auditoría", "Restaurar Registros", Icons.nav_papelera_restauracion, typeof(FormRestoreRecords), requireAdmin: true),
-                    NavMenuItemHelper.Direct("Datos del Consultorio", "Ajustes Institucionales", Icons.nav_configuracion_consultorio, typeof(FormSettings), requireAdmin: true),
-                    NavMenuItemHelper.Direct("Mi Perfil", "Mis Datos y Clave", Icons.nav_mi_perfil, typeof(FormUserProfile))
-                })
+            var reportSubItems = new List<NavMenuItemHelper>
+            {
+                NavMenuItemHelper.Direct("Reporte de Turnos", "Estadísticas de Citas", Icons.nav_gestion_turnos, typeof(FormAppointmentsReport))
             };
+
+            if (isAdministrator)
+            {
+                reportSubItems.Add(NavMenuItemHelper.Direct("Reporte de Ingresos", "Recaudación de Consultas", Icons.nav_caja_finanzas, typeof(FormIncomeReport)));
+            }
+
+            menuItems.Add(NavMenuItemHelper.Group("Reportes ▾", "Informes Administrativos", Icons.nav_reportes_estadisticas, reportSubItems));
+
+            var settingsSubItems = new List<NavMenuItemHelper>();
+
+            if (isAdministrator)
+            {
+                settingsSubItems.Add(NavMenuItemHelper.Direct("Usuarios del Sistema", "Cuentas de Acceso", Icons.nav_usuarios_sistema, typeof(FormUsers)));
+                settingsSubItems.Add(NavMenuItemHelper.Direct("Papelera y Auditoría", "Restaurar Registros", Icons.nav_papelera_restauracion, typeof(FormRestoreRecords)));
+                settingsSubItems.Add(NavMenuItemHelper.Direct("Datos del Consultorio", "Ajustes Institucionales", Icons.nav_configuracion_consultorio, typeof(FormSettings)));
+            }
+
+            settingsSubItems.Add(NavMenuItemHelper.Direct("Mi Perfil", "Mis Datos y Clave", Icons.nav_mi_perfil, typeof(FormUserProfile)));
+
+            menuItems.Add(NavMenuItemHelper.Group("Ajustes ▾", "Configuración y Seguridad", Icons.nav_configuracion_consultorio, settingsSubItems));
 
             foreach (var item in menuItems)
             {
-                if (item.RequireAdmin && !isAdministrator)
-                    continue;
-
-                var subItemsAuth = item.SubItems.Where(s => !s.RequireAdmin || isAdministrator).ToList();
-                
-                if (item.HasSubItems && !subItemsAuth.Any())
-                    continue;
-
                 var ribbonButton = CreateRibbonButton(item.Title, item.Icon ?? Icons.nav_dashboard);
 
                 if (item.HasSubItems)
                 {
-                    var dropdownMenu = CreateDropdownMenu(subItemsAuth, isAdministrator);
+                    var dropdownMenu = CreateDropdownMenu(item.SubItems, isAdministrator);
                     ribbonButton.Click += (s, e) => dropdownMenu.Show(ribbonButton, 0, ribbonButton.Height);
                 }
                 else if (item.TargetFormType != null)
@@ -139,7 +160,7 @@ namespace CliniqaxSystem.WinFormsUI
         {
             var btn = new Button
             {
-                Size = new Size(125, 76),
+                Size = new Size(128, 76),
                 Image = ResizeIcon(icon, 32, 32),
                 ImageAlign = ContentAlignment.TopCenter,
                 Text = title,
@@ -204,7 +225,7 @@ namespace CliniqaxSystem.WinFormsUI
                 openForm.WindowState = FormWindowState.Normal;
                 openForm.BringToFront();
                 openForm.Focus();
-                
+
                 return;
             }
 
@@ -216,11 +237,11 @@ namespace CliniqaxSystem.WinFormsUI
         {
             var bmp = new Bitmap(width, height);
             using var g = Graphics.FromImage(bmp);
-            
+
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.SmoothingMode = SmoothingMode.HighQuality;
             g.DrawImage(original, 0, 0, width, height);
-           
+
             return bmp;
         }
 
@@ -240,7 +261,7 @@ namespace CliniqaxSystem.WinFormsUI
 
         private async void OnFormClosingConfirmation(object? sender, FormClosingEventArgs e)
         {
-            if (_isShuttingDown) 
+            if (_isShuttingDown)
                 return;
 
             bool confirm = UIHelper.ConfirmMessage("¿Está seguro de que desea cerrar la sesión y salir del sistema?", "Cerrar Sesión");
@@ -263,7 +284,7 @@ namespace CliniqaxSystem.WinFormsUI
                 }
             }
             catch 
-            { 
+            {
             }
             finally
             {

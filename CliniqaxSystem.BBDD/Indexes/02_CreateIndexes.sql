@@ -71,7 +71,31 @@ ON [dbo].[ProfessionalSchedules] ([ProfessionalId] ASC);
 GO
 
 -- =========================================================================
--- 5. ÍNDICES DE ALTO RENDIMIENTO PARA LA AGENDA MÉDICA
+-- 5. ÍNDICES DE HISTORIA CLÍNICA Y GESTIÓN MÉDICA
+-- =========================================================================
+
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_MedicalRecords_PatientId]
+ON [dbo].[MedicalRecords] ([PatientId] ASC)
+WHERE ([IsDeleted] = 0);
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_MedicalRecords_RecordNumber]
+ON [dbo].[MedicalRecords] ([RecordNumber] ASC)
+WHERE ([IsDeleted] = 0);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Consultations_Record_Date]
+ON [dbo].[Consultations] ([MedicalRecordId] ASC, [ConsultationDate] DESC)
+WHERE ([IsDeleted] = 0);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_MedicalAttachments_Record]
+ON [dbo].[MedicalAttachments] ([MedicalRecordId] ASC, [CreatedAt] DESC)
+WHERE ([IsDeleted] = 0);
+GO
+
+-- =========================================================================
+-- 6. ÍNDICES DE ALTO RENDIMIENTO PARA LA AGENDA MÉDICA
 -- =========================================================================
 
 -- Optimiza el cálculo de franjas y la carga diaria/semanal por médico
@@ -93,7 +117,7 @@ ON [dbo].[Appointments] ([SpecialtyId] ASC);
 GO
 
 -- =========================================================================
--- 6. ÍNDICES DE CAJA DIARIA, MOVIMIENTOS Y COBROS
+-- 7. ÍNDICES DE CAJA DIARIA, MOVIMIENTOS Y COBROS
 -- =========================================================================
 
 CREATE UNIQUE NONCLUSTERED INDEX [UQ_CashSessions_SingleActivePerStation]
@@ -109,10 +133,6 @@ CREATE NONCLUSTERED INDEX [IX_CashMovements_CashSessionId]
 ON [dbo].[CashMovements] ([CashSessionId] ASC);
 GO
 
-CREATE NONCLUSTERED INDEX [IX_CashMovements_UserId]
-ON [dbo].[CashMovements] ([UserId] ASC);
-GO
-
 CREATE NONCLUSTERED INDEX [IX_ConsultationPayments_AppointmentId]
 ON [dbo].[ConsultationPayments] ([AppointmentId] ASC);
 GO
@@ -123,8 +143,4 @@ GO
 
 CREATE NONCLUSTERED INDEX [IX_ConsultationPayments_PaymentMethodId]
 ON [dbo].[ConsultationPayments] ([PaymentMethodId] ASC);
-GO
-
-CREATE NONCLUSTERED INDEX [IX_ConsultationPayments_UserId]
-ON [dbo].[ConsultationPayments] ([UserId] ASC);
 GO

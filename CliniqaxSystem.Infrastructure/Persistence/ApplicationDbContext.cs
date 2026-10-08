@@ -50,6 +50,20 @@ public class ApplicationDbContext : DbContext
     // ==========================================
     public DbSet<ClinicSettings> ClinicSettings => Set<ClinicSettings>();
 
+    // ==========================================
+    // 6. GESTIÓN CLÍNICA Y EXPEDIENTE DIGITAL
+    // ==========================================
+    public DbSet<DiagnosisType> DiagnosisTypes => Set<DiagnosisType>();
+    public DbSet<ConsultationStatus> ConsultationStatuses => Set<ConsultationStatus>();
+    public DbSet<AttachmentCategory> AttachmentCategories => Set<AttachmentCategory>();
+
+    public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
+    public DbSet<Consultation> Consultations => Set<Consultation>();
+    public DbSet<ClinicalEvolution> ClinicalEvolutions => Set<ClinicalEvolution>();
+    public DbSet<ClinicalDiagnosis> ClinicalDiagnoses => Set<ClinicalDiagnosis>();
+    public DbSet<MedicalInstruction> MedicalInstructions => Set<MedicalInstruction>();
+    public DbSet<MedicalAttachment> MedicalAttachments => Set<MedicalAttachment>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -392,7 +406,130 @@ public class ApplicationDbContext : DbContext
         });
 
         // =========================================================================
-        // I. FILTROS GLOBALES DE BORRADO LÓGICO
+        // I. GESTIÓN CLÍNICA Y EXPEDIENTE DIGITAL
+        // =========================================================================
+        modelBuilder.Entity<DiagnosisType>(entity =>
+        {
+            entity.ToTable("DiagnosisTypes");
+            entity.HasKey(d => d.Id);
+            entity.Property(d => d.Name).IsRequired().HasMaxLength(50);
+            entity.Property(d => d.Description).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<ConsultationStatus>(entity =>
+        {
+            entity.ToTable("ConsultationStatuses");
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<AttachmentCategory>(entity =>
+        {
+            entity.ToTable("AttachmentCategories");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Name).IsRequired().HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<MedicalRecord>(entity =>
+        {
+            entity.ToTable("MedicalRecords");
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.RecordNumber).IsRequired().HasMaxLength(30);
+            entity.Property(m => m.BloodType).HasMaxLength(10);
+            entity.Property(m => m.Allergies).HasMaxLength(500);
+
+            entity.HasIndex(m => m.PatientId).IsUnique().HasFilter("[IsDeleted] = 0").HasDatabaseName("UQ_MedicalRecords_PatientId");
+            entity.HasIndex(m => m.RecordNumber).IsUnique().HasFilter("[IsDeleted] = 0").HasDatabaseName("UQ_MedicalRecords_RecordNumber");
+
+            entity.HasOne(m => m.Patient)
+                  .WithOne()
+                  .HasForeignKey<MedicalRecord>(m => m.PatientId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Consultation>(entity =>
+        {
+            entity.ToTable("Consultations");
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.ReasonForConsultation).IsRequired().HasMaxLength(500);
+            entity.Property(c => c.ConsultationDate).HasColumnType("datetime2").IsRequired();
+
+            entity.HasIndex(c => new { c.MedicalRecordId, c.ConsultationDate }).HasFilter("[IsDeleted] = 0").HasDatabaseName("IX_Consultations_Record_Date");
+
+            entity.HasOne(c => c.MedicalRecord)
+                  .WithMany(m => m.Consultations)
+                  .HasForeignKey(c => c.MedicalRecordId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.Professional)
+                  .WithMany()
+                  .HasForeignKey(c => c.ProfessionalId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.Specialty)
+                  .WithMany()
+                  .HasForeignKey(c => c.SpecialtyId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.ConsultationStatus)
+                  .WithMany()
+                  .HasForeignKey(c => c.ConsultationStatusId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(c => c.Appointment)
+                  .WithMany()
+                  .HasForeignKey(c => c.AppointmentId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<ClinicalEvolution>(entity =>
+        {
+            entity.ToTable("ClinicalEvolutions");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Description).IsRequired();
+            entity.HasOne(e => e.Consultation).WithMany(c => c.ClinicalEvolutions).HasForeignKey(e => e.ConsultationId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ClinicalDiagnosis>(entity =>
+        {
+            entity.ToTable("ClinicalDiagnoses");
+            entity.HasKey(d => d.Id);
+            entity.Property(d => d.Description).IsRequired().HasMaxLength(250);
+            entity.Property(d => d.DiagnosticCode).HasMaxLength(20);
+            entity.Property(d => d.Notes).HasMaxLength(500);
+
+            entity.HasOne(d => d.Consultation).WithMany(c => c.ClinicalDiagnoses).HasForeignKey(d => d.ConsultationId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(d => d.DiagnosisType).WithMany().HasForeignKey(d => d.DiagnosisTypeId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<MedicalInstruction>(entity =>
+        {
+            entity.ToTable("MedicalInstructions");
+            entity.HasKey(i => i.Id);
+            entity.Property(i => i.Instructions).IsRequired();
+            entity.Property(i => i.FollowUpNotes).HasMaxLength(500);
+            entity.HasOne(i => i.Consultation).WithMany(c => c.MedicalInstructions).HasForeignKey(i => i.ConsultationId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MedicalAttachment>(entity =>
+        {
+            entity.ToTable("MedicalAttachments");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.OriginalFileName).IsRequired().HasMaxLength(255);
+            entity.Property(a => a.StoredFileName).IsRequired().HasMaxLength(255);
+            entity.Property(a => a.RelativePath).IsRequired().HasMaxLength(500);
+            entity.Property(a => a.FileExtension).IsRequired().HasMaxLength(20);
+            entity.Property(a => a.ContentType).IsRequired().HasMaxLength(100);
+            entity.Property(a => a.Notes).HasMaxLength(500);
+
+            entity.HasOne(a => a.MedicalRecord).WithMany(m => m.MedicalAttachments).HasForeignKey(a => a.MedicalRecordId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(a => a.Consultation).WithMany(c => c.MedicalAttachments).HasForeignKey(a => a.ConsultationId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(a => a.AttachmentCategory).WithMany().HasForeignKey(a => a.AttachmentCategoryId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // =========================================================================
+        // J. FILTROS GLOBALES DE BORRADO LÓGICO
         // =========================================================================
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {

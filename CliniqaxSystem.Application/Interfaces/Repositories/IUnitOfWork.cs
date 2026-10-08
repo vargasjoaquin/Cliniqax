@@ -13,8 +13,13 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         IUserRepository Users { get; }
         IRoleRepository Roles { get; }
         IClinicSettingsRepository ClinicSettings { get; }
+        IMedicalRecordRepository MedicalRecords { get; }
+        IConsultationRepository Consultations { get; }
 
         Task<IEnumerable<PaymentMethod>> GetPaymentMethodsAsync();
+        Task<IEnumerable<DiagnosisType>> GetDiagnosisTypesAsync();
+        Task<IEnumerable<ConsultationStatus>> GetConsultationStatusesAsync();
+        Task<IEnumerable<AttachmentCategory>> GetAttachmentCategoriesAsync();
 
         Task<bool> CompleteAsync();
         Task BeginTransactionAsync();

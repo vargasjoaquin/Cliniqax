@@ -24,6 +24,8 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             Users = new UserRepository(_context);
             Roles = new RoleRepository(_context);
             ClinicSettings = new ClinicSettingsRepository(_context);
+            MedicalRecords = new MedicalRecordRepository(_context);
+            Consultations = new ConsultationRepository(_context);
         }
 
         public IPatientRepository Patients { get; }
@@ -35,6 +37,8 @@ namespace CliniqaxSystem.Infrastructure.Repositories
         public IUserRepository Users { get; }
         public IRoleRepository Roles { get; }
         public IClinicSettingsRepository ClinicSettings { get; }
+        public IMedicalRecordRepository MedicalRecords { get; }
+        public IConsultationRepository Consultations { get; }
 
         public async Task<IEnumerable<PaymentMethod>> GetPaymentMethodsAsync()
         {
@@ -42,6 +46,33 @@ namespace CliniqaxSystem.Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(pm => pm.IsActive)
                 .OrderBy(pm => pm.Id)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DiagnosisType>> GetDiagnosisTypesAsync()
+        {
+            return await _context.DiagnosisTypes
+                .AsNoTracking()
+                .Where(d => d.IsActive)
+                .OrderBy(d => d.Id)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ConsultationStatus>> GetConsultationStatusesAsync()
+        {
+            return await _context.ConsultationStatuses
+                .AsNoTracking()
+                .Where(c => c.IsActive)
+                .OrderBy(c => c.Id)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AttachmentCategory>> GetAttachmentCategoriesAsync()
+        {
+            return await _context.AttachmentCategories
+                .AsNoTracking()
+                .Where(a => a.IsActive)
+                .OrderBy(a => a.Id)
                 .ToListAsync();
         }
 

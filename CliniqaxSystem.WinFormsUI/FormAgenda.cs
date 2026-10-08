@@ -4,6 +4,7 @@ using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.Domain.Enums;
 using CliniqaxSystem.WinFormsUI.Helpers;
 using CliniqaxSystem.WinFormsUI.Helpers.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
 namespace CliniqaxSystem.WinFormsUI
@@ -14,6 +15,7 @@ namespace CliniqaxSystem.WinFormsUI
         private readonly IProfessionalService _professionalService;
         private readonly IPatientService _patientService;
         private readonly ICatalogService _catalogService;
+        private readonly IServiceProvider _serviceProvider;
 
         private bool _isInitializing = false;
         private readonly SemaphoreSlim _loadLock = new(1, 1);
@@ -22,12 +24,13 @@ namespace CliniqaxSystem.WinFormsUI
         private List<AgendaSlotDto> _currentSlots = new();
         private AgendaSlotDto? _selectedSlot = null;
 
-        public FormAgenda(IAppointmentService appointmentService, IProfessionalService professionalService, IPatientService patientService, ICatalogService catalogService)
+        public FormAgenda(IAppointmentService appointmentService, IProfessionalService professionalService, IPatientService patientService, ICatalogService catalogService, IServiceProvider serviceProvider)
         {
             _appointmentService = appointmentService;
             _professionalService = professionalService;
             _patientService = patientService;
             _catalogService = catalogService;
+            _serviceProvider = serviceProvider;
 
             InitializeComponent();
             UIThemeHelper.ApplyFormStyle(this);
@@ -71,6 +74,28 @@ namespace CliniqaxSystem.WinFormsUI
 
             this.dataGridViewAgenda.CellClick += (s, e) => SynchronizeSelectedSlot();
             this.dataGridViewAgenda.CellFormatting += OnGridCellFormatting;
+
+            this.dataGridViewAgenda.CellDoubleClick += (s, e) =>
+            {
+                if (_selectedSlot?.Appointment == null) 
+                    return;
+
+                var app = _selectedSlot.Appointment;
+                var consultationEntryForm = new FormConsultationEntry(
+                    _serviceProvider.GetRequiredService<IClinicalService>(),
+                    _patientService,
+                    _professionalService,
+                    _serviceProvider.GetRequiredService<ICurrentUserService>(),
+                    app.PatientId,
+                    app.Id,
+                    app.ProfessionalId,
+                    app.SpecialtyId);
+
+                if (consultationEntryForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    _ = LoadAgendaSlotsAsync();
+                }
+            };
         }
 
         private async Task InitializeAgendaAsync()
@@ -110,7 +135,7 @@ namespace CliniqaxSystem.WinFormsUI
 
         private async Task LoadAgendaSlotsAsync()
         {
-            if (_isInitializing)
+            if (_isInitializing) 
                 return;
 
             if (!await _loadLock.WaitAsync(0))
@@ -152,6 +177,7 @@ namespace CliniqaxSystem.WinFormsUI
                         DNI = s.IsAvailable ? "-" : s.Appointment?.PatientDocument,
                         Telefono = s.IsAvailable ? "-" : s.Appointment?.PatientPhone,
                         Especialidad = s.IsAvailable ? "-" : s.Appointment?.SpecialtyName,
+                        HC = s.IsAvailable ? "-" : (s.Appointment?.HasClinicalHistory == true ? "SI" : "NO"),
                         Observaciones = s.Appointment?.Observations ?? ""
                     }).ToList();
 
@@ -224,9 +250,8 @@ namespace CliniqaxSystem.WinFormsUI
             int professionalId = (int)comboBoxProfessionals.SelectedValue!;
             var professional = _professionals.First(p => p.Id == professionalId);
 
-            // Diálogo rápido para seleccionar paciente y especialidad
             using var bookDialog = new FormBookSlotDialog(_patientService, professional);
-            
+
             if (bookDialog.ShowDialog(this) == DialogResult.OK)
             {
                 var appointmentDto = new AppointmentCreateDto
@@ -271,15 +296,14 @@ namespace CliniqaxSystem.WinFormsUI
             if (_selectedSlot?.Appointment == null)
                 return;
 
-            string reason = "";
+
             using var prompt = new FormBlindCashCountDialog.FormPromptDialog("Cancelar Turno", "Motivo de la cancelación:");
             
             if (prompt.ShowDialog(this) == DialogResult.OK)
             {
-                reason = prompt.EnteredDescription;
                 using (new WaitCursorHelper(this))
                 {
-                    var result = await _appointmentService.ChangeAppointmentStatusAsync(_selectedSlot.Appointment.Id, AppointmentStatus.Cancelled, reason);
+                    var result = await _appointmentService.ChangeAppointmentStatusAsync(_selectedSlot.Appointment.Id, AppointmentStatus.Cancelled, prompt.EnteredDescription);
                     UIHelper.ShowResult(result, "Cancelar Turno", async () =>
                     {
                         await LoadAgendaSlotsAsync();
@@ -290,7 +314,7 @@ namespace CliniqaxSystem.WinFormsUI
 
         private void OnGridCellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex < 0 || e.RowIndex >= dataGridViewAgenda.Rows.Count) 
+            if (e.RowIndex < 0 || e.RowIndex >= dataGridViewAgenda.Rows.Count)
                 return;
 
             var estado = dataGridViewAgenda.Rows[e.RowIndex].Cells["Estado"].Value?.ToString();
