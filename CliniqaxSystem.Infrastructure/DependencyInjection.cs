@@ -30,6 +30,7 @@ namespace CliniqaxSystem.Infrastructure
             services.Configure<DatabaseBackupSettings>(configuration.GetSection("DatabaseBackup"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.Configure<ClinicalStorageSettings>(configuration.GetSection("ClinicalStorage"));
+            services.Configure<WhatsAppSettings>(configuration.GetSection("WhatsAppSettings"));
 
             // 3. Repositorios y Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -43,6 +44,7 @@ namespace CliniqaxSystem.Infrastructure
             services.AddSingleton<ITicketPrinterService, TicketPrinterService>();
             services.AddSingleton<IAppEventBus, AppEventBusService>();
             services.AddSingleton<IClinicalStorageService, ClinicalStorageService>();
+            services.AddHttpClient<IWhatsAppService, WhatsAppService>();
 
             return services;
         }

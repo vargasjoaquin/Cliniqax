@@ -15,11 +15,15 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
         IClinicSettingsRepository ClinicSettings { get; }
         IMedicalRecordRepository MedicalRecords { get; }
         IConsultationRepository Consultations { get; }
+        INotificationRepository Notifications { get; }
+        IAuditRepository AuditLogs { get; }
 
         Task<IEnumerable<PaymentMethod>> GetPaymentMethodsAsync();
         Task<IEnumerable<DiagnosisType>> GetDiagnosisTypesAsync();
         Task<IEnumerable<ConsultationStatus>> GetConsultationStatusesAsync();
         Task<IEnumerable<AttachmentCategory>> GetAttachmentCategoriesAsync();
+        Task<IEnumerable<NotificationChannel>> GetNotificationChannelsAsync();
+        Task<IEnumerable<NotificationStatus>> GetNotificationStatusesAsync();
 
         Task<bool> CompleteAsync();
         Task BeginTransactionAsync();

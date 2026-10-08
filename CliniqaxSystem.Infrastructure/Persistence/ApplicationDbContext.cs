@@ -64,6 +64,17 @@ public class ApplicationDbContext : DbContext
     public DbSet<MedicalInstruction> MedicalInstructions => Set<MedicalInstruction>();
     public DbSet<MedicalAttachment> MedicalAttachments => Set<MedicalAttachment>();
 
+    // ==========================================
+    // 7. AUTOMATIZACIÓN, COMUNICACIÓN Y AUDITORÍA
+    // ==========================================
+    public DbSet<NotificationChannel> NotificationChannels => Set<NotificationChannel>();
+    public DbSet<NotificationStatus> NotificationStatuses => Set<NotificationStatus>();
+    public DbSet<NotificationTemplate> NotificationTemplates => Set<NotificationTemplate>();
+    public DbSet<ReminderRuleConfig> ReminderRuleConfigs => Set<ReminderRuleConfig>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<BackupExecutionLog> BackupExecutionLogs => Set<BackupExecutionLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -529,7 +540,74 @@ public class ApplicationDbContext : DbContext
         });
 
         // =========================================================================
-        // J. FILTROS GLOBALES DE BORRADO LÓGICO
+        // J.NOTIFICACIONES, REGLAS, AUDITORÍA Y BACKUPS
+        // =========================================================================
+        modelBuilder.Entity<NotificationChannel>(entity => { entity.ToTable("NotificationChannels"); entity.HasKey(c => c.Id); entity.Property(c => c.Name).IsRequired().HasMaxLength(50); });
+        modelBuilder.Entity<NotificationStatus>(entity => { entity.ToTable("NotificationStatuses"); entity.HasKey(s => s.Id); entity.Property(s => s.Name).IsRequired().HasMaxLength(50); });
+
+        modelBuilder.Entity<NotificationTemplate>(entity =>
+        {
+            entity.ToTable("NotificationTemplates");
+            entity.HasKey(t => t.Id);
+            entity.Property(t => t.Code).IsRequired().HasMaxLength(50);
+            entity.Property(t => t.Name).IsRequired().HasMaxLength(100);
+            entity.Property(t => t.SubjectTemplate).HasMaxLength(200);
+            entity.Property(t => t.BodyTemplate).IsRequired();
+            entity.HasIndex(t => new { t.Code, t.ChannelId }).IsUnique().HasDatabaseName("UQ_NotificationTemplates_Code_Channel");
+            entity.HasOne(t => t.Channel).WithMany().HasForeignKey(t => t.ChannelId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ReminderRuleConfig>(entity =>
+        {
+            entity.ToTable("ReminderRuleConfigs");
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Name).IsRequired().HasMaxLength(100);
+            entity.HasOne(r => r.Channel).WithMany().HasForeignKey(r => r.ChannelId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(r => r.Template).WithMany().HasForeignKey(r => r.TemplateId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.ToTable("Notifications");
+            entity.HasKey(n => n.Id);
+            entity.Property(n => n.Recipient).IsRequired().HasMaxLength(150);
+            entity.Property(n => n.Subject).HasMaxLength(200);
+            entity.Property(n => n.MessageBody).IsRequired();
+            entity.Property(n => n.TemplateCode).HasMaxLength(50);
+
+            entity.HasIndex(n => new { n.StatusId, n.ScheduledAt }).HasDatabaseName("IX_Notifications_Queue_Processing");
+
+            entity.HasOne(n => n.Appointment).WithMany().HasForeignKey(n => n.AppointmentId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(n => n.Patient).WithMany().HasForeignKey(n => n.PatientId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(n => n.Channel).WithMany().HasForeignKey(n => n.ChannelId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(n => n.Status).WithMany().HasForeignKey(n => n.StatusId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.ToTable("AuditLogs");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Username).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.UserRole).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.Action).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.EntityName).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.EntityId).HasMaxLength(50);
+            entity.Property(a => a.IpAddress).HasMaxLength(50);
+            entity.HasIndex(a => new { a.EntityName, a.Timestamp }).HasDatabaseName("IX_AuditLogs_Entity_Date");
+        });
+
+        modelBuilder.Entity<BackupExecutionLog>(entity =>
+        {
+            entity.ToTable("BackupExecutionLogs");
+            entity.HasKey(b => b.Id);
+            entity.Property(b => b.BackupType).IsRequired().HasMaxLength(50);
+            entity.Property(b => b.DestinationPath).IsRequired().HasMaxLength(500);
+            entity.Property(b => b.FileName).IsRequired().HasMaxLength(255);
+            entity.Property(b => b.ExecutedBy).IsRequired().HasMaxLength(50);
+        });
+
+        // =========================================================================
+        // K. FILTROS GLOBALES DE BORRADO LÓGICO
         // =========================================================================
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
