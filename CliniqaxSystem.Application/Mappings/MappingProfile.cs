@@ -3,6 +3,13 @@ using CliniqaxSystem.Application.DTOs.AdminAndDashboard;
 using CliniqaxSystem.Application.DTOs.Appointment;
 using CliniqaxSystem.Application.DTOs.Cash;
 using CliniqaxSystem.Application.DTOs.Catalog;
+using CliniqaxSystem.Application.DTOs.Clinical.Attachment;
+using CliniqaxSystem.Application.DTOs.Clinical.Consultation;
+using CliniqaxSystem.Application.DTOs.Clinical.Diagnosis;
+using CliniqaxSystem.Application.DTOs.Clinical.Evolution;
+using CliniqaxSystem.Application.DTOs.Clinical.MedicalAttachment;
+using CliniqaxSystem.Application.DTOs.Clinical.MedicalInstruction;
+using CliniqaxSystem.Application.DTOs.Clinical.MedicalRecord;
 using CliniqaxSystem.Application.DTOs.Patient;
 using CliniqaxSystem.Application.DTOs.Professional;
 using CliniqaxSystem.Application.DTOs.User;
@@ -208,6 +215,46 @@ namespace CliniqaxSystem.Application.Mappings
             // ==========================================
             CreateMap<ClinicSettings, ClinicSettingsDto>().ReverseMap()
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore());
+
+            // ==========================================
+            // 8. GESTIÓN CLÍNICA Y EXPEDIENTE DIGITAL
+            // ==========================================
+            CreateMap<DiagnosisType, DiagnosisTypeDto>();
+            CreateMap<ConsultationStatus, ConsultationStatusDto>();
+            CreateMap<AttachmentCategory, AttachmentCategoryDto>();
+
+            CreateMap<MedicalRecord, MedicalRecordDto>()
+                .ForMember(dest => dest.PatientFullName, opt => opt.MapFrom(src => src.Patient.FullName))
+                .ForMember(dest => dest.PatientDocument, opt => opt.MapFrom(src => src.Patient.DocumentNumber))
+                .ForMember(dest => dest.PatientHealthInsurance, opt => opt.MapFrom(src => src.Patient.HealthInsurance != null ? src.Patient.HealthInsurance.Name : "Particular"))
+                .ForMember(dest => dest.PatientAffiliateNumber, opt => opt.MapFrom(src => src.Patient.AffiliateNumber))
+                .ForMember(dest => dest.PatientAge, opt => opt.MapFrom(src => src.Patient.Age))
+                .ForMember(dest => dest.Consultations, opt => opt.MapFrom(src => src.Consultations.OrderByDescending(c => c.ConsultationDate)))
+                .ForMember(dest => dest.MedicalAttachments, opt => opt.MapFrom(src => src.MedicalAttachments.OrderByDescending(a => a.CreatedAt)));
+
+            CreateMap<Consultation, ConsultationDto>()
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.MedicalRecord.PatientId))
+                .ForMember(dest => dest.PatientFullName, opt => opt.MapFrom(src => src.MedicalRecord.Patient.FullName))
+                .ForMember(dest => dest.PatientDocument, opt => opt.MapFrom(src => src.MedicalRecord.Patient.DocumentNumber))
+                .ForMember(dest => dest.ProfessionalName, opt => opt.MapFrom(src => src.Professional.FullName))
+                .ForMember(dest => dest.ProfessionalLicense, opt => opt.MapFrom(src => src.Professional.LicenseNumber))
+                .ForMember(dest => dest.SpecialtyName, opt => opt.MapFrom(src => src.Specialty.Name))
+                .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.ConsultationStatus.Name));
+
+            CreateMap<Consultation, ConsultationSummaryDto>()
+                .ForMember(dest => dest.ProfessionalName, opt => opt.MapFrom(src => src.Professional.FullName))
+                .ForMember(dest => dest.SpecialtyName, opt => opt.MapFrom(src => src.Specialty.Name))
+                .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.ConsultationStatus.Name))
+                .ForMember(dest => dest.MainDiagnosis, opt => opt.MapFrom(src => src.ClinicalDiagnoses.FirstOrDefault() != null ? src.ClinicalDiagnoses.First().Description : "-"))
+                .ForMember(dest => dest.AttachmentsCount, opt => opt.MapFrom(src => src.MedicalAttachments.Count));
+
+            CreateMap<ClinicalEvolution, ClinicalEvolutionDto>();
+            CreateMap<ClinicalDiagnosis, ClinicalDiagnosisDto>()
+                .ForMember(dest => dest.DiagnosisTypeName, opt => opt.MapFrom(src => src.DiagnosisType.Name));
+
+            CreateMap<MedicalInstruction, MedicalInstructionDto>();
+            CreateMap<MedicalAttachment, MedicalAttachmentDto>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.AttachmentCategory != null ? src.AttachmentCategory.Name : "Sin Categoría"));
         }
     }
 }

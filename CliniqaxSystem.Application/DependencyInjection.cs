@@ -24,6 +24,7 @@ namespace CliniqaxSystem.Application
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRestoreService, RestoreService>();
             services.AddScoped<IClinicSettingsService, ClinicSettingsService>();
+            services.AddScoped<IClinicalService, ClinicalService>();
 
             return services;
         }

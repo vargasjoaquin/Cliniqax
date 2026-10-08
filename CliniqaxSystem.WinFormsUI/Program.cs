@@ -108,6 +108,8 @@ namespace CliniqaxSystem.WinFormsUI
                 services.AddTransient<FormRestoreRecords>();
                 services.AddTransient<FormSettings>();
                 services.AddTransient<FormRecoverPassword>();
+                services.AddTransient<FormMedicalRecord>();
+                services.AddTransient<FormConsultationEntry>();
             });
     }
 }
