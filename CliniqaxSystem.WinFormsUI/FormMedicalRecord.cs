@@ -4,8 +4,10 @@ using CliniqaxSystem.Application.DTOs.Clinical.MedicalRecord;
 using CliniqaxSystem.Application.DTOs.Patient;
 using CliniqaxSystem.Application.Interfaces.Common;
 using CliniqaxSystem.Application.Interfaces.Services;
+using CliniqaxSystem.Domain.Constants;
 using CliniqaxSystem.WinFormsUI.Helpers;
 using CliniqaxSystem.WinFormsUI.Helpers.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
 namespace CliniqaxSystem.WinFormsUI
@@ -108,7 +110,7 @@ namespace CliniqaxSystem.WinFormsUI
             using (new WaitCursorHelper(this))
             {
                 _currentRecord = await _clinicalService.GetMedicalRecordByPatientIdAsync(patientId);
-                
+
                 if (_currentRecord == null)
                     return;
 
@@ -135,6 +137,21 @@ namespace CliniqaxSystem.WinFormsUI
                 dataGridViewAttachments.DataSource = null;
                 dataGridViewAttachments.DataSource = _currentRecord.MedicalAttachments;
                 UIHelper.FormatGrid(dataGridViewAttachments);
+
+                // 5. Auditoría de acceso a Historia Clínica (V3 - Req. 24)
+                try
+                {
+                    var auditService = _serviceProvider.GetRequiredService<IAuditService>();
+                    
+                    await auditService.LogActionAsync(
+                        AuditActionConstants.VIEW_CLINICAL_RECORD,
+                        "MedicalRecord",
+                        _currentRecord.Id.ToString(),
+                        $"Acceso a Historia Clínica del paciente {_currentRecord.PatientFullName} ({_currentRecord.RecordNumber})");
+                }
+                catch
+                {
+                }
             }
         }
 
