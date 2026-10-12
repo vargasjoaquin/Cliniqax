@@ -70,6 +70,13 @@ namespace CliniqaxSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<NotificationTemplate?> GetTemplateByIdAsync(int id)
+        {
+            return await context.NotificationTemplates
+                .Include(t => t.Channel)
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
         public async Task<NotificationTemplate?> GetTemplateByCodeAndChannelAsync(string code, int channelId)
         {
             return await context.NotificationTemplates
@@ -85,11 +92,14 @@ namespace CliniqaxSystem.Infrastructure.Repositories
         public async Task<IEnumerable<ReminderRuleConfig>> GetActiveReminderRulesAsync()
         {
             return await context.ReminderRuleConfigs
-                .AsNoTracking()
                 .Include(r => r.Channel)
                 .Include(r => r.Template)
-                .Where(r => r.IsEnabled)
                 .ToListAsync();
+        }
+
+        public void UpdateReminderRule(ReminderRuleConfig rule)
+        {
+            context.ReminderRuleConfigs.Update(rule);
         }
     }
 }
