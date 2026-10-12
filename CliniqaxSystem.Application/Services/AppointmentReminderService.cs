@@ -44,7 +44,7 @@ namespace CliniqaxSystem.Application.Services
                     double hoursDifference = timeUntilAppointment.TotalHours;
 
                     // Si está dentro de la ventana de anticipación (ej: faltan entre 23 y 25 horas para la regla de 24h)
-                    if (hoursDifference <= rule.AdvanceHours && hoursDifference > (rule.AdvanceHours - 2))
+                    if (hoursDifference <= rule.AdvanceHours && hoursDifference > 0)
                     {
                         // Verificar si ya se envió o encoló un recordatorio para este turno y canal
                         var existingNotifications = await unitOfWork.Notifications.GetHistoryAsync(now.AddDays(-3), now.AddDays(1), rule.ChannelId);

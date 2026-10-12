@@ -8,7 +8,7 @@ using CliniqaxSystem.Domain.Entities;
 
 namespace CliniqaxSystem.Application.Services
 {
-    public class NotificationService(IUnitOfWork unitOfWork, IEmailService emailService, IWhatsAppService whatsAppService,       ITemplateEngineService templateEngine, IMapper mapper) : INotificationService
+    public class NotificationService(IUnitOfWork unitOfWork, IEmailService emailService, IWhatsAppService whatsAppService, ITemplateEngineService templateEngine, IMapper mapper) : INotificationService
     {
         public async Task<OperationResult> QueueNotificationAsync(int channelId, string recipient, string templateCode, IDictionary<string, string> tokens, int? appointmentId = null, int? patientId = null, DateTime? scheduledAt = null)
         {
@@ -136,10 +136,8 @@ namespace CliniqaxSystem.Application.Services
 
         public async Task<OperationResult> UpdateTemplateAsync(NotificationTemplateUpdateDto dto)
         {
-            var templates = await unitOfWork.Notifications.GetTemplatesAsync();
-            
-            var template = templates.FirstOrDefault(t => t.Id == dto.Id);
-            
+            var template = await unitOfWork.Notifications.GetTemplateByIdAsync(dto.Id);
+
             if (template == null)
                 return OperationResult.Failure("Plantilla no encontrada.");
 
@@ -172,7 +170,8 @@ namespace CliniqaxSystem.Application.Services
                 return OperationResult.Failure("Regla de recordatorio no encontrada.");
 
             rule.IsEnabled = !rule.IsEnabled;
-            
+            unitOfWork.Notifications.UpdateReminderRule(rule);
+
             bool isSuccess = await unitOfWork.CompleteAsync();
 
             return isSuccess

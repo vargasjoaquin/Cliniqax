@@ -12,8 +12,10 @@ namespace CliniqaxSystem.Application.Interfaces.Repositories
 
         // Plantillas y reglas
         Task<IEnumerable<NotificationTemplate>> GetTemplatesAsync();
+        Task<NotificationTemplate?> GetTemplateByIdAsync(int id);
         Task<NotificationTemplate?> GetTemplateByCodeAndChannelAsync(string code, int channelId);
         void UpdateTemplate(NotificationTemplate template);
         Task<IEnumerable<ReminderRuleConfig>> GetActiveReminderRulesAsync();
+        void UpdateReminderRule(ReminderRuleConfig rule);
     }
 }
