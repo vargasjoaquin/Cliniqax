@@ -45,7 +45,9 @@ namespace CliniqaxSystem.Infrastructure
             services.AddSingleton<IAppEventBus, AppEventBusService>();
             services.AddSingleton<IClinicalStorageService, ClinicalStorageService>();
             services.AddHttpClient<IWhatsAppService, WhatsAppService>();
-
+            services.AddSingleton<ClinicalDocumentGeneratorService>();
+            services.AddSingleton<IClinicalDocumentParserService, ClinicalDocumentParserService>();
+            services.AddScoped<IClinicalDocumentService, ClinicalDocumentService>();
             return services;
         }
     }

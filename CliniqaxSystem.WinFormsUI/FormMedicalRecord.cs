@@ -71,6 +71,39 @@ namespace CliniqaxSystem.WinFormsUI
                     });
                 }
             });
+
+            ButtonIconOverlayHelper.BindEvents(this.buttonDocumentHub, this.picIconDocumentHub);
+            ButtonIconOverlayHelper.BindEvents(this.buttonDownloadBlankTemplate, this.picIconDownloadBlankTemplate);
+
+            this.buttonDocumentHub.Click += async (s, e) =>
+            {
+                if (_selectedPatientId <= 0)
+                {
+                    UIHelper.WarnMessage(this, "Debe seleccionar un paciente de la lista para gestionar sus documentos clínicos.", "Aviso");
+                    return;
+                }
+
+                if (_currentRecord == null)
+                {
+                    await LoadMedicalRecordAsync(_selectedPatientId);
+                }
+
+                try
+                {
+                    var documentService = _serviceProvider.GetRequiredService<IClinicalDocumentService>();
+                    using var dialog = new FormClinicalDocumentHubDialog(documentService, _selectedPatientId, _currentRecord);
+                    if (dialog.ShowDialog(this) == DialogResult.OK)
+                    {
+                        await LoadMedicalRecordAsync(_selectedPatientId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ErrorMessage(this, $"Error al abrir el centro documental:\n{ex.Message}", "Fallo de Apertura");
+                }
+            };
+
+            this.buttonDownloadBlankTemplate.Click += async (s, e) => await ExecuteDownloadBlankTemplateAsync();
         }
 
         private async Task InitializeFormAsync()
@@ -204,6 +237,26 @@ namespace CliniqaxSystem.WinFormsUI
             else
             {
                 UIHelper.WarnMessage(this, "Seleccione una consulta de la lista para ver su detalle.", "Aviso");
+            }
+        }
+
+        private async Task ExecuteDownloadBlankTemplateAsync()
+        {
+            using (new WaitCursorHelper(this))
+            {
+                try
+                {
+                    var documentService = _serviceProvider.GetRequiredService<IClinicalDocumentService>();
+
+                    byte[] wordBytes = await documentService.GenerateBlankTemplateWordAsync(patientId: null);
+                    string fileName = $"Plantilla_Historia_Clinica_Cliniqax_{DateTime.Now:yyyyMMdd}.docx";
+
+                    await FileExportHelper.SaveAndOpenWordAsync(this, wordBytes, fileName, "Descargar Plantilla en Word");
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ErrorMessage(this, $"Error al generar la plantilla en Word:\n{ex.Message}", "Fallo de Descarga");
+                }
             }
         }
 
