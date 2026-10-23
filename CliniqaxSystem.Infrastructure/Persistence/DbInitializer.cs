@@ -120,6 +120,78 @@ namespace CliniqaxSystem.Infrastructure.Persistence
                 });
                 await context.SaveChangesAsync();
             }
+
+            // 6. Tipos de Diagnostico
+            if (!await context.DiagnosisTypes.AnyAsync())
+            {
+                using var transaction = await context.Database.BeginTransactionAsync();
+                try
+                {
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[DiagnosisTypes] ON;");
+                    await context.DiagnosisTypes.AddRangeAsync(
+                        new DiagnosisType { Id = DiagnosisTypeConstants.PRESUMPTIVE, Name = "Presuntivo", Description = "Diagnostico preliminar", IsActive = true },
+                        new DiagnosisType { Id = DiagnosisTypeConstants.DEFINITIVE, Name = "Definitivo", Description = "Diagnostico confirmado", IsActive = true },
+                        new DiagnosisType { Id = DiagnosisTypeConstants.DIFFERENTIAL, Name = "Diferencial", Description = "Diagnostico alternativo", IsActive = true }
+                    );
+                    await context.SaveChangesAsync();
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[DiagnosisTypes] OFF;");
+                    await transaction.CommitAsync();
+                }
+                catch 
+                {
+                    await transaction.RollbackAsync();
+                    throw; 
+                }
+            }
+
+            // 7. Estados de Consulta Medica
+            if (!await context.ConsultationStatuses.AnyAsync())
+            {
+                using var transaction = await context.Database.BeginTransactionAsync();
+                try
+                {
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[ConsultationStatuses] ON;");
+                    await context.ConsultationStatuses.AddRangeAsync(
+                        new ConsultationStatus { Id = ConsultationStatusConstants.IN_PROGRESS, Name = "En Curso", IsActive = true },
+                        new ConsultationStatus { Id = ConsultationStatusConstants.COMPLETED, Name = "Finalizada", IsActive = true },
+                        new ConsultationStatus { Id = ConsultationStatusConstants.CANCELLED, Name = "Anulada", IsActive = true }
+                    );
+                    await context.SaveChangesAsync();
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[ConsultationStatuses] OFF;");
+                    await transaction.CommitAsync();
+                }
+                catch 
+                {
+                    await transaction.RollbackAsync(); 
+                    throw; 
+                }
+            }
+
+            // 8. Categorias de Archivos y Estudios
+            if (!await context.AttachmentCategories.AnyAsync())
+            {
+                using var transaction = await context.Database.BeginTransactionAsync();
+                try
+                {
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[AttachmentCategories] ON;");
+                    await context.AttachmentCategories.AddRangeAsync(
+                        new AttachmentCategory { Id = AttachmentCategoryConstants.LABORATORY, Name = "Laboratorio / Analisis Clinicos", IsActive = true },
+                        new AttachmentCategory { Id = AttachmentCategoryConstants.IMAGING, Name = "Diagnostico por Imagenes", IsActive = true },
+                        new AttachmentCategory { Id = AttachmentCategoryConstants.CARDIOLOGY, Name = "Cardiologia / Trazados", IsActive = true },
+                        new AttachmentCategory { Id = AttachmentCategoryConstants.SURGICAL_REPORTS, Name = "Informes Quirurgicos / Biopsias", IsActive = true },
+                        new AttachmentCategory { Id = AttachmentCategoryConstants.EXTERNAL_DOCS, Name = "Certificados y Documentacion Externa", IsActive = true },
+                        new AttachmentCategory { Id = AttachmentCategoryConstants.OTHER, Name = "Otros Estudios", IsActive = true }
+                    );
+                    await context.SaveChangesAsync();
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[AttachmentCategories] OFF;");
+                    await transaction.CommitAsync();
+                }
+                catch 
+                {
+                    await transaction.RollbackAsync();
+                    throw; 
+                }
+            }
         }
     }
 }

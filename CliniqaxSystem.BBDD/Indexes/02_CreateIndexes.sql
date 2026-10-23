@@ -144,3 +144,10 @@ GO
 CREATE NONCLUSTERED INDEX [IX_ConsultationPayments_PaymentMethodId]
 ON [dbo].[ConsultationPayments] ([PaymentMethodId] ASC);
 GO
+CREATE NONCLUSTERED INDEX [IX_CashMovements_UserId]
+ON [dbo].[CashMovements] ([UserId] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_ConsultationPayments_UserId]
+ON [dbo].[ConsultationPayments] ([UserId] ASC);
+GO
