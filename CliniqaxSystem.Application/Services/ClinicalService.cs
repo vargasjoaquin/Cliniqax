@@ -16,7 +16,7 @@ using FluentValidation;
 namespace CliniqaxSystem.Application.Services
 {
     public class ClinicalService(IUnitOfWork unitOfWork, IClinicalStorageService storageService, IMapper mapper, IAppEventBus eventBus,
-                                 ICurrentUserService currentUserService,  IValidator<ConsultationCreateDto> consultationValidator, IValidator<MedicalRecordUpdateDto> recordUpdateValidator,
+                                 ICurrentUserService currentUserService, IAuditService auditService, IValidator<ConsultationCreateDto> consultationValidator, IValidator<MedicalRecordUpdateDto> recordUpdateValidator,
                                  IValidator<MedicalAttachmentCreateDto> attachmentValidator) : IClinicalService
     {
         // ==========================================
@@ -46,6 +46,12 @@ namespace CliniqaxSystem.Application.Services
 
                 medicalRecord = await unitOfWork.MedicalRecords.GetByPatientIdAsync(patientId);
             }
+
+            await auditService.LogActionAsync(
+                AuditActionConstants.VIEW_CLINICAL_RECORD,
+                "MedicalRecord",
+                medicalRecord?.Id.ToString(),
+                $"Acceso a historia clínica del paciente ID {patientId} ({medicalRecord?.RecordNumber})");
 
             return mapper.Map<MedicalRecordDto>(medicalRecord);
         }

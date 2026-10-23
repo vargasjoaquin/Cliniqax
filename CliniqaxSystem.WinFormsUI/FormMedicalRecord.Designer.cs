@@ -35,6 +35,10 @@
             comboBoxPatients = new ComboBox();
             labelPatientNameDisplay = new Label();
             labelPatientDetailsDisplay = new Label();
+            picIconDocumentHub = new PictureBox();
+            buttonDocumentHub = new Button();
+            picIconDownloadBlankTemplate = new PictureBox();
+            buttonDownloadBlankTemplate = new Button();
             labelRecordNumberBadge = new Label();
             tabControlRecord = new TabControl();
             tabPageAntecedentes = new TabPage();
@@ -73,6 +77,8 @@
             buttonDeleteAttachment = new Button();
             panelHeader.SuspendLayout();
             panelPatientSelectorCard.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picIconDocumentHub).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picIconDownloadBlankTemplate).BeginInit();
             tabControlRecord.SuspendLayout();
             tabPageAntecedentes.SuspendLayout();
             panelAntecedentesCard.SuspendLayout();
@@ -97,7 +103,7 @@
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(1300, 56);
+            panelHeader.Size = new Size(1382, 56);
             panelHeader.TabIndex = 0;
             // 
             // labelTitle
@@ -118,12 +124,16 @@
             panelPatientSelectorCard.Controls.Add(comboBoxPatients);
             panelPatientSelectorCard.Controls.Add(labelPatientNameDisplay);
             panelPatientSelectorCard.Controls.Add(labelPatientDetailsDisplay);
+            panelPatientSelectorCard.Controls.Add(picIconDocumentHub);
+            panelPatientSelectorCard.Controls.Add(buttonDocumentHub);
+            panelPatientSelectorCard.Controls.Add(picIconDownloadBlankTemplate);
+            panelPatientSelectorCard.Controls.Add(buttonDownloadBlankTemplate);
             panelPatientSelectorCard.Controls.Add(labelRecordNumberBadge);
             panelPatientSelectorCard.Dock = DockStyle.Top;
             panelPatientSelectorCard.Location = new Point(0, 56);
             panelPatientSelectorCard.Name = "panelPatientSelectorCard";
             panelPatientSelectorCard.Padding = new Padding(16, 10, 16, 10);
-            panelPatientSelectorCard.Size = new Size(1300, 80);
+            panelPatientSelectorCard.Size = new Size(1382, 80);
             panelPatientSelectorCard.TabIndex = 1;
             // 
             // labelSelectPatientPrompt
@@ -142,40 +152,100 @@
             comboBoxPatients.Font = new Font("Segoe UI", 9.5F);
             comboBoxPatients.Location = new Point(16, 33);
             comboBoxPatients.Name = "comboBoxPatients";
-            comboBoxPatients.Size = new Size(320, 29);
+            comboBoxPatients.Size = new Size(300, 29);
             comboBoxPatients.TabIndex = 1;
             // 
             // labelPatientNameDisplay
             // 
             labelPatientNameDisplay.AutoEllipsis = true;
-            labelPatientNameDisplay.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            labelPatientNameDisplay.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
             labelPatientNameDisplay.ForeColor = Color.FromArgb(15, 23, 42);
-            labelPatientNameDisplay.Location = new Point(360, 15);
+            labelPatientNameDisplay.Location = new Point(330, 15);
             labelPatientNameDisplay.Name = "labelPatientNameDisplay";
-            labelPatientNameDisplay.Size = new Size(500, 28);
+            labelPatientNameDisplay.Size = new Size(320, 26);
             labelPatientNameDisplay.TabIndex = 2;
             labelPatientNameDisplay.Text = "SELECCIONE UN PACIENTE";
             // 
             // labelPatientDetailsDisplay
             // 
             labelPatientDetailsDisplay.AutoEllipsis = true;
-            labelPatientDetailsDisplay.Font = new Font("Segoe UI", 9F);
+            labelPatientDetailsDisplay.Font = new Font("Segoe UI", 8.5F);
             labelPatientDetailsDisplay.ForeColor = Color.FromArgb(100, 116, 139);
-            labelPatientDetailsDisplay.Location = new Point(360, 43);
+            labelPatientDetailsDisplay.Location = new Point(330, 43);
             labelPatientDetailsDisplay.Name = "labelPatientDetailsDisplay";
-            labelPatientDetailsDisplay.Size = new Size(600, 22);
+            labelPatientDetailsDisplay.Size = new Size(320, 22);
             labelPatientDetailsDisplay.TabIndex = 3;
             labelPatientDetailsDisplay.Text = "DNI: -  |  Edad: -  |  Cobertura: -";
+            // 
+            // picIconDocumentHub
+            // 
+            picIconDocumentHub.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            picIconDocumentHub.BackColor = Color.FromArgb(2, 132, 199);
+            picIconDocumentHub.Cursor = Cursors.Hand;
+            picIconDocumentHub.Image = Icons.action_exportar_pdf;
+            picIconDocumentHub.Location = new Point(660, 22);
+            picIconDocumentHub.Name = "picIconDocumentHub";
+            picIconDocumentHub.Size = new Size(32, 38);
+            picIconDocumentHub.SizeMode = PictureBoxSizeMode.Zoom;
+            picIconDocumentHub.TabIndex = 99;
+            picIconDocumentHub.TabStop = false;
+            // 
+            // buttonDocumentHub
+            // 
+            buttonDocumentHub.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonDocumentHub.BackColor = Color.FromArgb(2, 132, 199);
+            buttonDocumentHub.Cursor = Cursors.Hand;
+            buttonDocumentHub.FlatAppearance.BorderSize = 0;
+            buttonDocumentHub.FlatStyle = FlatStyle.Flat;
+            buttonDocumentHub.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            buttonDocumentHub.ForeColor = Color.White;
+            buttonDocumentHub.Location = new Point(660, 20);
+            buttonDocumentHub.Name = "buttonDocumentHub";
+            buttonDocumentHub.Padding = new Padding(26, 0, 0, 0);
+            buttonDocumentHub.Size = new Size(185, 42);
+            buttonDocumentHub.TabIndex = 4;
+            buttonDocumentHub.Text = "EXPEDIENTE PDF ▾";
+            buttonDocumentHub.UseVisualStyleBackColor = false;
+            // 
+            // picIconDownloadBlankTemplate
+            // 
+            picIconDownloadBlankTemplate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            picIconDownloadBlankTemplate.BackColor = Color.FromArgb(15, 23, 42);
+            picIconDownloadBlankTemplate.Cursor = Cursors.Hand;
+            picIconDownloadBlankTemplate.Image = Icons.action_guardar;
+            picIconDownloadBlankTemplate.Location = new Point(860, 22);
+            picIconDownloadBlankTemplate.Name = "picIconDownloadBlankTemplate";
+            picIconDownloadBlankTemplate.Size = new Size(32, 38);
+            picIconDownloadBlankTemplate.SizeMode = PictureBoxSizeMode.Zoom;
+            picIconDownloadBlankTemplate.TabIndex = 99;
+            picIconDownloadBlankTemplate.TabStop = false;
+            // 
+            // buttonDownloadBlankTemplate
+            // 
+            buttonDownloadBlankTemplate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonDownloadBlankTemplate.BackColor = Color.FromArgb(15, 23, 42);
+            buttonDownloadBlankTemplate.Cursor = Cursors.Hand;
+            buttonDownloadBlankTemplate.FlatAppearance.BorderSize = 0;
+            buttonDownloadBlankTemplate.FlatStyle = FlatStyle.Flat;
+            buttonDownloadBlankTemplate.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            buttonDownloadBlankTemplate.ForeColor = Color.White;
+            buttonDownloadBlankTemplate.Location = new Point(860, 20);
+            buttonDownloadBlankTemplate.Name = "buttonDownloadBlankTemplate";
+            buttonDownloadBlankTemplate.Padding = new Padding(26, 0, 0, 0);
+            buttonDownloadBlankTemplate.Size = new Size(195, 42);
+            buttonDownloadBlankTemplate.TabIndex = 5;
+            buttonDownloadBlankTemplate.Text = "PLANTILLA VACÍA";
+            buttonDownloadBlankTemplate.UseVisualStyleBackColor = false;
             // 
             // labelRecordNumberBadge
             // 
             labelRecordNumberBadge.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            labelRecordNumberBadge.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            labelRecordNumberBadge.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
             labelRecordNumberBadge.ForeColor = Color.FromArgb(2, 132, 199);
-            labelRecordNumberBadge.Location = new Point(1020, 25);
+            labelRecordNumberBadge.Location = new Point(1160, 25);
             labelRecordNumberBadge.Name = "labelRecordNumberBadge";
-            labelRecordNumberBadge.Size = new Size(260, 28);
-            labelRecordNumberBadge.TabIndex = 4;
+            labelRecordNumberBadge.Size = new Size(210, 28);
+            labelRecordNumberBadge.TabIndex = 6;
             labelRecordNumberBadge.Text = "[HC-00000000]";
             labelRecordNumberBadge.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -189,7 +259,7 @@
             tabControlRecord.Location = new Point(0, 136);
             tabControlRecord.Name = "tabControlRecord";
             tabControlRecord.SelectedIndex = 0;
-            tabControlRecord.Size = new Size(1300, 664);
+            tabControlRecord.Size = new Size(1382, 664);
             tabControlRecord.TabIndex = 2;
             // 
             // tabPageAntecedentes
@@ -199,7 +269,7 @@
             tabPageAntecedentes.Location = new Point(4, 30);
             tabPageAntecedentes.Name = "tabPageAntecedentes";
             tabPageAntecedentes.Padding = new Padding(16);
-            tabPageAntecedentes.Size = new Size(1292, 630);
+            tabPageAntecedentes.Size = new Size(1374, 630);
             tabPageAntecedentes.TabIndex = 0;
             tabPageAntecedentes.Text = "  Antecedentes Clínicos  ";
             // 
@@ -226,7 +296,7 @@
             panelAntecedentesCard.Location = new Point(16, 16);
             panelAntecedentesCard.Name = "panelAntecedentesCard";
             panelAntecedentesCard.Padding = new Padding(20);
-            panelAntecedentesCard.Size = new Size(1260, 598);
+            panelAntecedentesCard.Size = new Size(1342, 598);
             panelAntecedentesCard.TabIndex = 0;
             // 
             // labelBloodType
@@ -269,7 +339,7 @@
             textBoxAllergies.Location = new Point(190, 38);
             textBoxAllergies.Name = "textBoxAllergies";
             textBoxAllergies.PlaceholderText = "Medicamentosas, alimentarias, ambientales...";
-            textBoxAllergies.Size = new Size(1050, 30);
+            textBoxAllergies.Size = new Size(1132, 30);
             textBoxAllergies.TabIndex = 3;
             // 
             // labelPathological
@@ -310,7 +380,7 @@
             textBoxNonPathological.Location = new Point(640, 103);
             textBoxNonPathological.Multiline = true;
             textBoxNonPathological.Name = "textBoxNonPathological";
-            textBoxNonPathological.Size = new Size(600, 75);
+            textBoxNonPathological.Size = new Size(682, 75);
             textBoxNonPathological.TabIndex = 7;
             // 
             // labelSurgical
@@ -351,7 +421,7 @@
             textBoxFamily.Location = new Point(640, 213);
             textBoxFamily.Multiline = true;
             textBoxFamily.Name = "textBoxFamily";
-            textBoxFamily.Size = new Size(600, 75);
+            textBoxFamily.Size = new Size(682, 75);
             textBoxFamily.TabIndex = 11;
             // 
             // labelGeneralObs
@@ -372,7 +442,7 @@
             textBoxGeneralObservations.Location = new Point(20, 323);
             textBoxGeneralObservations.Multiline = true;
             textBoxGeneralObservations.Name = "textBoxGeneralObservations";
-            textBoxGeneralObservations.Size = new Size(1220, 180);
+            textBoxGeneralObservations.Size = new Size(1302, 180);
             textBoxGeneralObservations.TabIndex = 13;
             // 
             // picIconSaveAntecedentes
@@ -381,7 +451,7 @@
             picIconSaveAntecedentes.BackColor = Color.FromArgb(16, 185, 129);
             picIconSaveAntecedentes.Cursor = Cursors.Hand;
             picIconSaveAntecedentes.Image = Icons.action_guardar;
-            picIconSaveAntecedentes.Location = new Point(940, 525);
+            picIconSaveAntecedentes.Location = new Point(1022, 525);
             picIconSaveAntecedentes.Name = "picIconSaveAntecedentes";
             picIconSaveAntecedentes.Size = new Size(48, 48);
             picIconSaveAntecedentes.SizeMode = PictureBoxSizeMode.Zoom;
@@ -397,7 +467,7 @@
             buttonSaveAntecedentes.FlatStyle = FlatStyle.Flat;
             buttonSaveAntecedentes.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             buttonSaveAntecedentes.ForeColor = Color.White;
-            buttonSaveAntecedentes.Location = new Point(940, 525);
+            buttonSaveAntecedentes.Location = new Point(1022, 525);
             buttonSaveAntecedentes.Name = "buttonSaveAntecedentes";
             buttonSaveAntecedentes.Padding = new Padding(28, 0, 0, 0);
             buttonSaveAntecedentes.Size = new Size(300, 48);
@@ -628,7 +698,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(248, 250, 252);
-            ClientSize = new Size(1300, 800);
+            ClientSize = new Size(1382, 800);
             Controls.Add(tabControlRecord);
             Controls.Add(panelPatientSelectorCard);
             Controls.Add(panelHeader);
@@ -639,6 +709,8 @@
             panelHeader.PerformLayout();
             panelPatientSelectorCard.ResumeLayout(false);
             panelPatientSelectorCard.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picIconDocumentHub).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picIconDownloadBlankTemplate).EndInit();
             tabControlRecord.ResumeLayout(false);
             tabPageAntecedentes.ResumeLayout(false);
             panelAntecedentesCard.ResumeLayout(false);
@@ -667,6 +739,10 @@
         private ComboBox comboBoxPatients;
         private Label labelPatientNameDisplay;
         private Label labelPatientDetailsDisplay;
+        private Button buttonDocumentHub;
+        private PictureBox picIconDocumentHub;
+        private Button buttonDownloadBlankTemplate;
+        private PictureBox picIconDownloadBlankTemplate;
         private Label labelRecordNumberBadge;
         private TabControl tabControlRecord;
         private TabPage tabPageAntecedentes;

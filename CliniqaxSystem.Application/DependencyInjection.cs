@@ -25,6 +25,10 @@ namespace CliniqaxSystem.Application
             services.AddScoped<IRestoreService, RestoreService>();
             services.AddScoped<IClinicSettingsService, ClinicSettingsService>();
             services.AddScoped<IClinicalService, ClinicalService>();
+            services.AddSingleton<ITemplateEngineService, TemplateEngineService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IAppointmentReminderService, AppointmentReminderService>();
+            services.AddScoped<IAuditService, AuditService>();
 
             return services;
         }

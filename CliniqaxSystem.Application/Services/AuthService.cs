@@ -3,10 +3,11 @@ using CliniqaxSystem.Application.Common;
 using CliniqaxSystem.Application.DTOs.User;
 using CliniqaxSystem.Application.Interfaces.Repositories;
 using CliniqaxSystem.Application.Interfaces.Services;
+using CliniqaxSystem.Domain.Constants;
 
 namespace CliniqaxSystem.Application.Services
 {
-    public class AuthService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, ICurrentUserService currentUserService, IEmailService emailService, IMapper mapper) : IAuthService
+    public class AuthService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, ICurrentUserService currentUserService, IEmailService emailService, IAuditService auditService, IMapper mapper) : IAuthService
     {
         public async Task<OperationResult> LoginAsync(string username, string password)
         {
@@ -24,13 +25,19 @@ namespace CliniqaxSystem.Application.Services
             bool isPasswordValid = passwordHasher.VerifyHashPassword(password, user.Password);
 
             if (!isPasswordValid)
+            {
+                // Registrar intento fallido en auditoría
+                await auditService.LogActionAsync("LOGIN_FALLIDO", "User", user.Id.ToString(), $"Intento con contraseña incorrecta para @{username}");
                 return OperationResult.Failure("La contraseña es incorrecta. Verifique sus credenciales.");
+            }
 
             if (currentUserService is CurrentUserService sessionHolder)
             {
                 sessionHolder.CurrentUser = mapper.Map<UserSessionDto>(user);
                 sessionHolder.CurrentUser.LoginTime = DateTime.Now;
             }
+
+            await auditService.LogActionAsync(AuditActionConstants.LOGIN, "User", user.Id.ToString(), $"Inicio de sesión exitoso del operador @{user.Username}");
 
             return OperationResult.Ok($"¡Bienvenido/a, {user.FirstName}!");
         }
@@ -93,10 +100,12 @@ namespace CliniqaxSystem.Application.Services
             try
             {
                 await emailService.SendEmailAsync(user.Email, "Restablecimiento de Contraseña — Cliniqax", emailBody);
+                await auditService.LogActionAsync("RESET_PASSWORD", "User", user.Id.ToString(), $"Blanqueo de clave despachado a {maskedEmailAddress}");
             }
             catch (Exception ex)
             {
-                return OperationResult.Ok($"Se generó tu clave temporal: '{temporaryPassword}'. (Aviso: No se pudo despachar el correo SMTP: {ex.Message})");
+                string errorDetail = ex.InnerException != null ? $"{ex.Message} -> {ex.InnerException.Message}" : ex.Message;
+                return OperationResult.Ok($"Se generó tu clave temporal: '{temporaryPassword}'. (Aviso: No se pudo despachar el correo SMTP: {errorDetail})");
             }
 
             return OperationResult.Ok($"¡Contraseña temporal generada con éxito! Se ha enviado a tu correo: {maskedEmailAddress}. Inicia sesión con la clave recibida y cámbiala desde 'Mi Perfil'.");
