@@ -419,3 +419,108 @@ CREATE TABLE [dbo].[ConsultationPayments] (
     CONSTRAINT [FK_Payments_Users]          FOREIGN KEY ([UserId])          REFERENCES [dbo].[Users] ([Id])
 );
 GO
+
+-- =========================================================================
+-- 9. AUTOMATIZACION, NOTIFICACIONES Y AUDITORIA 
+-- =========================================================================
+
+CREATE TABLE [dbo].[NotificationChannels] (
+    [Id]       INT IDENTITY (1, 1) NOT NULL,
+    [Name]     NVARCHAR (50)       NOT NULL,
+    [IsActive] BIT                 NOT NULL DEFAULT 1,
+    CONSTRAINT [PK_NotificationChannels] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+GO
+
+CREATE TABLE [dbo].[NotificationStatuses] (
+    [Id]       INT IDENTITY (1, 1) NOT NULL,
+    [Name]     NVARCHAR (50)       NOT NULL,
+    [IsActive] BIT                 NOT NULL DEFAULT 1,
+    CONSTRAINT [PK_NotificationStatuses] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+GO
+
+CREATE TABLE [dbo].[NotificationTemplates] (
+    [Id]              INT IDENTITY (1, 1) NOT NULL,
+    [Code]            NVARCHAR (50)       NOT NULL,
+    [ChannelId]       INT                 NOT NULL,
+    [Name]            NVARCHAR (100)      NOT NULL,
+    [SubjectTemplate] NVARCHAR (200)      NULL,
+    [BodyTemplate]    NVARCHAR (MAX)      NOT NULL,
+    [IsActive]        BIT                 NOT NULL DEFAULT 1,
+    [CreatedAt]       DATETIME2 (7)       NOT NULL DEFAULT SYSUTCDATETIME(),
+    [LastUpdatedAt]   DATETIME2 (7)       NULL,
+    [RowVersion]      ROWVERSION          NOT NULL,
+    CONSTRAINT [PK_NotificationTemplates] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Templates_Channels] FOREIGN KEY ([ChannelId]) REFERENCES [dbo].[NotificationChannels] ([Id])
+);
+GO
+
+CREATE TABLE [dbo].[ReminderRuleConfigs] (
+    [Id]           INT IDENTITY (1, 1) NOT NULL,
+    [Name]         NVARCHAR (100)      NOT NULL,
+    [AdvanceHours] INT                 NOT NULL,
+    [ChannelId]    INT                 NOT NULL,
+    [TemplateId]   INT                 NOT NULL,
+    [IsEnabled]    BIT                 NOT NULL DEFAULT 1,
+    [RowVersion]   ROWVERSION          NOT NULL,
+    CONSTRAINT [PK_ReminderRuleConfigs] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Rules_Channels]  FOREIGN KEY ([ChannelId])  REFERENCES [dbo].[NotificationChannels] ([Id]),
+    CONSTRAINT [FK_Rules_Templates] FOREIGN KEY ([TemplateId]) REFERENCES [dbo].[NotificationTemplates] ([Id])
+);
+GO
+
+CREATE TABLE [dbo].[Notifications] (
+    [Id]            INT IDENTITY (1, 1) NOT NULL,
+    [AppointmentId] INT                 NULL,
+    [PatientId]     INT                 NULL,
+    [ChannelId]     INT                 NOT NULL,
+    [StatusId]      INT                 NOT NULL DEFAULT 1,
+    [TemplateCode]  NVARCHAR (50)       NULL,
+    [Recipient]     NVARCHAR (150)      NOT NULL,
+    [Subject]       NVARCHAR (200)      NULL,
+    [MessageBody]   NVARCHAR (MAX)      NOT NULL,
+    [RetryCount]    INT                 NOT NULL DEFAULT 0,
+    [MaxRetryCount] INT                 NOT NULL DEFAULT 3,
+    [ErrorMessage]  NVARCHAR (MAX)      NULL,
+    [ScheduledAt]   DATETIME2 (7)       NOT NULL DEFAULT SYSUTCDATETIME(),
+    [SentAt]        DATETIME2 (7)       NULL,
+    [CreatedAt]     DATETIME2 (7)       NOT NULL DEFAULT SYSUTCDATETIME(),
+    [RowVersion]    ROWVERSION          NOT NULL,
+    CONSTRAINT [PK_Notifications] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Notif_Appointments] FOREIGN KEY ([AppointmentId]) REFERENCES [dbo].[Appointments] ([Id]) ON DELETE SET NULL,
+    CONSTRAINT [FK_Notif_Patients]     FOREIGN KEY ([PatientId])     REFERENCES [dbo].[Patients] ([Id])     ON DELETE SET NULL,
+    CONSTRAINT [FK_Notif_Channels]     FOREIGN KEY ([ChannelId])     REFERENCES [dbo].[NotificationChannels] ([Id]),
+    CONSTRAINT [FK_Notif_Statuses]     FOREIGN KEY ([StatusId])      REFERENCES [dbo].[NotificationStatuses] ([Id])
+);
+GO
+
+CREATE TABLE [dbo].[AuditLogs] (
+    [Id]         INT IDENTITY (1, 1) NOT NULL,
+    [UserId]     INT                 NULL,
+    [Username]   NVARCHAR (50)       NOT NULL,
+    [UserRole]   NVARCHAR (50)       NOT NULL,
+    [Action]     NVARCHAR (50)       NOT NULL,
+    [EntityName] NVARCHAR (50)       NOT NULL,
+    [EntityId]   NVARCHAR (50)       NULL,
+    [Details]    NVARCHAR (MAX)      NULL,
+    [IpAddress]  NVARCHAR (50)       NULL,
+    [Timestamp]  DATETIME2 (7)       NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT [PK_AuditLogs] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+GO
+
+CREATE TABLE [dbo].[BackupExecutionLogs] (
+    [Id]              INT IDENTITY (1, 1) NOT NULL,
+    [BackupType]      NVARCHAR (50)       NOT NULL,
+    [DestinationPath] NVARCHAR (500)      NOT NULL,
+    [FileName]        NVARCHAR (255)      NOT NULL,
+    [FileSizeBytes]   BIGINT              NOT NULL,
+    [IsSuccess]       BIT                 NOT NULL,
+    [ErrorMessage]    NVARCHAR (MAX)      NULL,
+    [DurationSeconds] INT                 NOT NULL,
+    [ExecutedAt]      DATETIME2 (7)       NOT NULL DEFAULT SYSUTCDATETIME(),
+    [ExecutedBy]      NVARCHAR (50)       NOT NULL,
+    CONSTRAINT [PK_BackupExecutionLogs] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+GO

@@ -1,4 +1,4 @@
-using CliniqaxSystem.Application;
+Ôªøusing CliniqaxSystem.Application;
 using CliniqaxSystem.Application.Interfaces.Services;
 using CliniqaxSystem.Infrastructure;
 using CliniqaxSystem.Infrastructure.Persistence;
@@ -32,34 +32,34 @@ namespace CliniqaxSystem.WinFormsUI
                 if (!db.Database.CanConnect())
                 {
                     MessageBox.Show(
-                        "No se pudo establecer conexiÛn con Microsoft SQL Server.\n\n" +
+                        "No se pudo establecer conexi√≥n con Microsoft SQL Server.\n\n" +
                         "Por favor verifique que:\n" +
-                        "1. El servicio de SQL Server estÈ iniciado.\n" +
+                        "1. El servicio de SQL Server est√© iniciado.\n" +
                         "2. La base de datos 'Cliniqax' haya sido creada con el script SQL.\n" +
-                        "3. La cadena de conexiÛn en 'appsettings.json' sea correcta.",
+                        "3. La cadena de conexi√≥n en 'appsettings.json' sea correcta.",
                         "Error de Base de Datos",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return;
                 }
 
-                //DbInitializer.SeedAsync(db).GetAwaiter().GetResult();
+                DbInitializer.SeedAsync(db).GetAwaiter().GetResult();
 
                 var licenseService = scope.ServiceProvider.GetRequiredService<ILicenseManagerService>();
                 var licenseValidation = licenseService.ValidateInstalledLicenseAsync().GetAwaiter().GetResult();
 
                 if (!licenseValidation.Success || licenseService.CurrentLicense == null || !licenseService.CurrentLicense.IsValid || licenseService.CurrentLicense.IsExpired)
                 {
-                    // Licencia no instalada, alterada o expirada -> Bloqueo y di·logo de activaciÛn
+                    // Licencia no instalada, alterada o expirada -> Bloqueo y di√°logo de activaci√≥n
                     using var activationForm = new FormLicenseActivation(licenseService, licenseValidation.Message);
                     if (activationForm.ShowDialog() != DialogResult.OK)
                     {
-                        return; // Bloquea el inicio si se cancela la activaciÛn
+                        return; // Bloquea el inicio si se cancela la activaci√≥n
                     }
                 }
                 else if (licenseService.CurrentLicense.IsExpiredSoon)
                 {
-                    // Licencia v·lida pero prÛxima a vencer (<= 7 dÌas) -> Aviso diario informativo
+                    // Licencia v√°lida pero pr√≥xima a vencer (<= 7 d√≠as) -> Aviso diario informativo
                     using var warningDialog = new FormLicenseWarningDialog(licenseService.CurrentLicense, licenseService);
                     warningDialog.ShowDialog();
                 }
@@ -68,7 +68,7 @@ namespace CliniqaxSystem.WinFormsUI
             {
                 string detail = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                 MessageBox.Show(
-                    $"Fallo crÌtico durante el arranque del sistema:\n\n{detail}",
+                    $"Fallo cr√≠tico durante el arranque del sistema:\n\n{detail}",
                     "Error al Inicializar",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
