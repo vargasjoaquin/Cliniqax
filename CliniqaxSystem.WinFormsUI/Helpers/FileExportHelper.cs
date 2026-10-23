@@ -14,6 +14,11 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             return await SaveAndOpenFileAsync(owner, excelBytes, defaultFileName, "Archivos Excel (*.xlsx)|*.xlsx", dialogTitle);
         }
 
+        public static async Task<bool> SaveAndOpenWordAsync(Form owner, byte[]? wordBytes, string defaultFileName, string dialogTitle = "Guardar Plantilla en Word")
+        {
+            return await SaveAndOpenFileAsync(owner, wordBytes, defaultFileName, "Documentos de Microsoft Word (*.docx)|*.docx", dialogTitle);
+        }
+
         public static async Task<bool> SaveAndOpenFileAsync(Form owner, byte[]? fileBytes, string defaultFileName, string filter, string dialogTitle = "Guardar Archivo")
         {
             if (fileBytes == null || fileBytes.Length == 0)

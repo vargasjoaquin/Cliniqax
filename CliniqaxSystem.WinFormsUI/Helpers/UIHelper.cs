@@ -57,6 +57,7 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
 
             // 2. Profesionales y Médicos
             { "LicenseNumber", "Matrícula Profesional" },
+            { "ProfessionalLicense", "Matrícula" },
             { "AppointmentDuration", "Duración Turno (min)" },
             { "AppointmentDurationMinutes", "Duración Turno (min)" },
             { "Observations", "Observaciones" },
@@ -71,12 +72,13 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             { "EndTime", "Hora Fin" },
             { "TimeSlot", "Horario" },
             { "TimeRange", "Franja Horaria" },
-            { "StatusName", "Estado del Turno" },
+            { "StatusName", "Estado" },
             { "PatientName", "Paciente" },
             { "PatientDocument", "DNI Paciente" },
             { "PatientPhone", "Teléfono Paciente" },
             { "CancellationReason", "Motivo de Cancelación" },
             { "IsAvailable", "¿Disponible?" },
+            { "HC", "Historia Clínica" },
 
             // 4. Caja Diaria, Cobros y Finanzas
             { "StationName", "Puesto / Recepción" },
@@ -85,7 +87,7 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             { "InitialCash", "Fondo Inicial" },
             { "RealCash", "Efectivo Contado" },
             { "ExpectedCash", "Efectivo Esperado" },
-            { "Difference", "Diferencia / Balance" },
+            { "Difference", "Diferencia" },
             { "TotalCashIncome", "Cobros Efectivo" },
             { "TotalDebitIncome", "Cobros Débito" },
             { "TotalCreditIncome", "Cobros Crédito" },
@@ -102,37 +104,73 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             { "PaymentChange", "Vuelto Entregado" },
             { "ReceiptNumber", "N.° Comprobante" },
             { "PaymentMethodName", "Medio de Pago" },
-            { "CashierName", "Receptor / Operador" },
+            { "CashierName", "Operador / Cajero" },
             { "ClosingNotes", "Observaciones de Cierre" },
 
             // 5. Catálogos y Ajustes Institucionales
+            { "RecordNumber", "N.° Historia Clínica" },
+            { "BloodType", "Grupo Sanguíneo" },
+            { "Allergies", "Alergias" },
+            { "ConsultationDate", "Fecha de Atención" },
+            { "ReasonForConsultation", "Motivo de Consulta" },
+            { "PhysicalExamination", "Examen Físico" },
+            { "MainDiagnosis", "Diagnóstico Principal" },
+            { "DiagnosisTypeName", "Tipo de Diagnóstico" },
+            { "DiagnosticCode", "Código CIE-10" },
+            { "EvolutionDate", "Fecha Evolución" },
+            { "OriginalFileName", "Nombre del Archivo" },
+            { "CategoryName", "Categoría del Estudio" },
+            { "FileExtension", "Formato" },
+            { "AttachmentsCount", "Estudios Adjuntos" },
+            { "Instructions", "Indicaciones Médicas" },
+            { "MedicationDetails", "Medicación / Posología" },
+            { "FollowUpNotes", "Próximo Control" },
+
+            // 6. Notificaciones y recordarios.
+            { "ChannelName", "Canal de Envío" },
+            { "Recipient", "Destinatario / Contacto" },
+            { "Subject", "Asunto" },
+            { "MessageBody", "Mensaje" },
+            { "ScheduledAt", "Fecha Programada" },
+            { "SentAt", "Fecha de Envío" },
+            { "RetryCount", "Reintentos" },
+            { "ErrorMessage", "Detalle del Error" },
+            { "TemplateName", "Plantilla Asociada" },
+            { "AdvanceHours", "Anticipación (Horas)" },
+            { "IsEnabled", "¿Habilitado?" },
+
+            // 7. Auditoría y copias de seguridad.
+            { "Timestamp", "Fecha y Hora" },
+            { "Username", "Usuario" },
+            { "UserRole", "Rol" },
+            { "Action", "Acción Realizada" },
+            { "EntityName", "Módulo / Entidad" },
+            { "Details", "Detalle de la Operación" },
+            { "IpAddress", "Terminal / Equipo" },
+            { "BackupType", "Tipo de Respaldo" },
+            { "FileName", "Nombre del Archivo" },
+            { "FileSizeFormatted", "Tamaño" },
+            { "IsSuccess", "Resultado" },
+            { "DurationSeconds", "Duración (seg)" },
+            { "ExecutedAt", "Fecha de Ejecución" },
+            { "ExecutedBy", "Ejecutado Por" },
+
+            // 8. Campos generales.
             { "Name", "Nombre / Denominación" },
-            { "Description", "Descripción / Alcance" },
+            { "Description", "Descripción" },
             { "Cuit", "CUIT Oficial" },
             { "CUIT", "CUIT Oficial" },
             { "ClinicName", "Nombre del Consultorio" },
-            { "ReceiptFormat", "Formato Recibo" },
-            { "ReceiptFooterMessage", "Pie del Recibo" },
-
-            // 6. Seguridad y Usuarios
-            { "UserName", "Operador / Cajero" },
-            { "Username", "Usuario (Login)" },
-            { "RoleName", "Rol de Acceso" },
-            { "Status", "Estado" },
-
-            // 7. Papelera de Reciclaje / Auditoría
-            { "EntityType", "Módulo / Padrón" },
-            { "Identifier", "Identificador" },
-            { "AdditionalInfo", "Información Extra" },
-            { "DeletedAt", "Fecha de Baja" },
-            { "DeletedBy", "Dado de baja por" },
+            { "UserName", "Operador" },
             { "CreatedAt", "Fecha de Alta" },
-            { "CreatedBy", "Registrado por" }
+            { "CreatedBy", "Registrado Por" },
+            { "DeletedAt", "Fecha de Baja" },
+            { "DeletedBy", "Dado de Baja Por" }
         };
 
         public static void FormatGrid(DataGridView dgv)
         {
-            if (dgv == null) 
+            if (dgv == null)
                 return;
 
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -151,22 +189,28 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
             dgv.ColumnHeadersHeight = 36;
 
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 242, 254); // Slate Light
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 242, 254);
             dgv.DefaultCellStyle.SelectionForeColor = Color.FromArgb(3, 105, 161);
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
             dgv.RowTemplate.Height = 30;
 
             string[] columnsToHide = {
-                "Id", "IsDeleted", "RowVersion", "IsActive", "Status", "Password", "NewPassword", "CurrentPassword",
-                "RoleId", "SpecialtyId", "ProfessionalId", "PatientId", "HealthInsuranceId",
-                "UserId", "CashSessionId", "AppointmentId", "PaymentMethodId", "MovementType",
-                "Photo", "Logo", "LogoBytes", "SpecialtyIds", "SpecialtyNames", "Schedules",
-                "Payments", "CashMovements", "Appointments", "ProfessionalSpecialties",
-                "HasClinicalHistory", "HasClinicalEvolution", "ShowLogoOnReceipt", "AutoPrintReceipt",
-                "ThermalPrinterName", "HealthInsurance", "Professional", "Specialty", "Patient",
-                "User", "Role", "CashSession", "Appointment", "PaymentMethod", "ClinicSettings"
-             };
+                "Id", "UserId", "RoleId", "SpecialtyId", "ProfessionalId", "PatientId", "HealthInsuranceId",
+                "CashSessionId", "AppointmentId", "PaymentMethodId", "MedicalRecordId", "ConsultationId",
+                "DiagnosisTypeId", "AttachmentCategoryId", "TemplateId", "ChannelId", "StatusId", "EntityId",
+                "Password", "NewPassword", "CurrentPassword", "Photo", "Logo", "LogoBytes",
+                "RowVersion", "IsDeleted", "IsActive","MovementType", "Status", "Channel", "TemplateCode", 
+                "MaxRetries", "MaxRetryCount", "FileSizeBytes", "DestinationPath", "RelativePath",
+                "StoredFileName", "RawExtractedText", "IsCliniqaxTemplate", "DurationSeconds",
+                "SpecialtyIds", "SpecialtyNames", "Schedules", "Payments", "CashMovements",
+                "Appointments", "ProfessionalSpecialties", "HasClinicalHistory", "HasClinicalEvolution",
+                "ShowLogoOnReceipt", "AutoPrintReceipt", "ThermalPrinterName", "HealthInsurance",
+                "Professional", "Specialty", "Patient", "User", "Role", "CashSession", "Appointment",
+                "PaymentMethod", "ClinicSettings", "Evolutions", "Diagnoses", "Instructions",
+                "Attachments", "MedicalRecord", "Consultation", "DiagnosisType", "ConsultationStatus",
+                "AttachmentCategory", "NotificationChannel", "NotificationStatus", "Template"
+            };
 
             foreach (var colName in columnsToHide)
             {
@@ -181,26 +225,43 @@ namespace CliniqaxSystem.WinFormsUI.Helpers
             }
 
             string[] moneyCols = {
-            "Amount", "CopayAmount", "PaymentReceived", "PaymentChange",
-            "InitialCash", "RealCash", "ExpectedCash", "Difference",
-            "TotalCashIncome", "TotalDebitIncome", "TotalCreditIncome",
-            "TotalTransferIncome", "TotalQrIncome", "TotalManualCashIn",
-            "TotalManualCashOut", "CurrentSystemCash", "TotalTurnover"
+                "Amount", "CopayAmount", "PaymentReceived", "PaymentChange",
+                "InitialCash", "RealCash", "ExpectedCash", "Difference",
+                "TotalCashIncome", "TotalDebitIncome", "TotalCreditIncome",
+                "TotalTransferIncome", "TotalQrIncome", "TotalManualCashIn",
+                "TotalManualCashOut", "CurrentSystemCash", "TotalTurnover"
             };
 
             foreach (var col in moneyCols)
             {
                 if (dgv.Columns.Contains(col))
+                {
                     dgv.Columns[col].DefaultCellStyle.Format = "C2";
+                    dgv.Columns[col].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                }
             }
 
-            string[] dateCols = { "BirthDate", "AppointmentDate", "Date", "CreatedAt", "DeletedAt", "OpeningDate", "ClosingDate", "LastUpdatedAt" };
+            string[] dateOnlyCols = { "BirthDate", "AppointmentDate" };
 
-            foreach (var col in dateCols)
+            foreach (var col in dateOnlyCols)
             {
                 if (dgv.Columns.Contains(col))
                 {
-                    dgv.Columns[col].DefaultCellStyle.Format = col == "BirthDate" || col == "AppointmentDate" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm";
+                    dgv.Columns[col].DefaultCellStyle.Format = "dd/MM/yyyy";
+                    dgv.Columns[col].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                }
+            }
+
+            string[] dateTimeCols = {
+                "Date", "CreatedAt", "DeletedAt", "OpeningDate", "ClosingDate", "LastUpdatedAt",
+                "ConsultationDate", "EvolutionDate", "ScheduledAt", "SentAt", "Timestamp", "ExecutedAt"
+            };
+
+            foreach (var col in dateTimeCols)
+            {
+                if (dgv.Columns.Contains(col))
+                {
+                    dgv.Columns[col].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                     dgv.Columns[col].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 }
             }

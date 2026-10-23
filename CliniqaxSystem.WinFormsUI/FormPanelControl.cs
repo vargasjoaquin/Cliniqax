@@ -14,7 +14,7 @@ namespace CliniqaxSystem.WinFormsUI
         private readonly IBackupService _backupService;
 
         private FormHome? _dashboardForm;
-
+        private System.Windows.Forms.Timer? _reminderTimer;
         private bool _isShuttingDown = false;
 
         public FormPanelControl(ICurrentUserService currentUserService, IServiceProvider serviceProvider, IBackupService backupService)
@@ -33,6 +33,8 @@ namespace CliniqaxSystem.WinFormsUI
             timerClock.Tick += (s, e) => labelClockTime.Text = DateTime.Now.ToString("HH:mm:ss");
             timerClock.Start();
 
+            InitializeBackgroundRemindersTimer();
+
             this.buttonLogout.Click += (s, e) => this.Close();
             this.FormClosing += OnFormClosingConfirmation;
 
@@ -41,6 +43,25 @@ namespace CliniqaxSystem.WinFormsUI
                 InitializeNavigationAndSession();
                 await LoadEmbeddedDashboardAsync();
             };
+        }
+
+        private void InitializeBackgroundRemindersTimer()
+        {
+            _reminderTimer = new System.Windows.Forms.Timer();
+            _reminderTimer.Interval = 15 * 60 * 1000; // Evalúa cada 15 minutos
+            _reminderTimer.Tick += async (s, e) =>
+            {
+                try
+                {
+                    var reminderService = _serviceProvider.GetRequiredService<IAppointmentReminderService>();
+                    await reminderService.CheckAndGenerateAppointmentRemindersAsync();
+                }
+                catch
+                {
+                    // Manejo silencioso en segundo plano para no interrumpir el flujo de UI del operador
+                }
+            };
+            _reminderTimer.Start();
         }
 
         private void InitializeNavigationAndSession()
@@ -123,6 +144,9 @@ namespace CliniqaxSystem.WinFormsUI
 
             if (isAdministrator)
             {
+                settingsSubItems.Add(NavMenuItemHelper.Direct("Centro de Configuración", "Parámetros y Automatización", Icons.nav_configuracion_consultorio, typeof(FormConfigurationHub)));
+                settingsSubItems.Add(NavMenuItemHelper.Direct("Monitor de Notificaciones", "Control WhatsApp y Email", Icons.status_atendido, typeof(FormNotificationMonitor)));
+                settingsSubItems.Add(NavMenuItemHelper.Direct("Visor de Auditoría", "Trazabilidad de Operaciones", Icons.action_buscar_filtrar, typeof(FormAuditViewer)));
                 settingsSubItems.Add(NavMenuItemHelper.Direct("Usuarios del Sistema", "Cuentas de Acceso", Icons.nav_usuarios_sistema, typeof(FormUsers)));
                 settingsSubItems.Add(NavMenuItemHelper.Direct("Papelera y Auditoría", "Restaurar Registros", Icons.nav_papelera_restauracion, typeof(FormRestoreRecords)));
                 settingsSubItems.Add(NavMenuItemHelper.Direct("Datos del Consultorio", "Ajustes Institucionales", Icons.nav_configuracion_consultorio, typeof(FormSettings)));
@@ -276,6 +300,9 @@ namespace CliniqaxSystem.WinFormsUI
             _isShuttingDown = true;
             this.Enabled = false;
 
+            _reminderTimer?.Stop();
+            _reminderTimer?.Dispose();
+
             try
             {
                 using (new WaitCursorHelper(this))
@@ -283,7 +310,7 @@ namespace CliniqaxSystem.WinFormsUI
                     await _backupService.ExecuteAutomaticBackupAsync();
                 }
             }
-            catch 
+            catch
             {
             }
             finally

@@ -3,6 +3,7 @@ using CliniqaxSystem.Domain.Entities;
 using CliniqaxSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Security.AccessControl;
 
 namespace CliniqaxSystem.Infrastructure.Repositories
 {
@@ -26,6 +27,8 @@ namespace CliniqaxSystem.Infrastructure.Repositories
             ClinicSettings = new ClinicSettingsRepository(_context);
             MedicalRecords = new MedicalRecordRepository(_context);
             Consultations = new ConsultationRepository(_context);
+            Notifications = new NotificationRepository(_context);
+            AuditLogs = new AuditRepository(_context);
         }
 
         public IPatientRepository Patients { get; }
@@ -39,6 +42,8 @@ namespace CliniqaxSystem.Infrastructure.Repositories
         public IClinicSettingsRepository ClinicSettings { get; }
         public IMedicalRecordRepository MedicalRecords { get; }
         public IConsultationRepository Consultations { get; }
+        public INotificationRepository Notifications { get; }
+        public IAuditRepository AuditLogs { get; }
 
         public async Task<IEnumerable<PaymentMethod>> GetPaymentMethodsAsync()
         {
@@ -73,6 +78,24 @@ namespace CliniqaxSystem.Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(a => a.IsActive)
                 .OrderBy(a => a.Id)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<NotificationChannel>> GetNotificationChannelsAsync()
+        {
+            return await _context.NotificationChannels
+                .AsNoTracking()
+                .Where(c => c.IsActive)
+                .OrderBy(c => c.Id)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<NotificationStatus>> GetNotificationStatusesAsync()
+        {
+            return await _context.NotificationStatuses
+                .AsNoTracking()
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Id)
                 .ToListAsync();
         }
 
